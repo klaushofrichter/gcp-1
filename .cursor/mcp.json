@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "quotes-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "cwd": "/Users/klaushofrichter/Development/mcp-1",
+      "env": {}
+    }
+  }
+} 

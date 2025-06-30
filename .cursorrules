@@ -1,0 +1,13 @@
+# MCP Quotes Server
+
+This project contains an MCP server that provides Star Trek quotes.
+
+## MCP Server Configuration
+- Command: npm start
+- Working Directory: /Users/klaushofrichter/Development/mcp-1
+- Resources Available:
+  - quotes://all - All quotes as JSON
+  - quotes://random - Random quote as JSON
+  - quotes://text - All quotes as formatted text
+
+The server uses the Model Context Protocol to serve quotes from quotes.json. 
