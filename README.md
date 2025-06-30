@@ -23,7 +23,7 @@ A comprehensive Model Context Protocol (MCP) server that provides Star Trek quot
 
 - Node.js (version 16 or higher)
 - npm (comes with Node.js)
-- MCP-compatible client (Cursor, Claude Desktop, or Gemini CLI)
+- MCP-compatible client (Cursor or Claude Desktop)
 
 ## 🛠️ Installation
 
@@ -105,32 +105,7 @@ npm start
    - Completely quit and restart Claude Desktop
    - The server will be loaded automatically
 
-### 💎 Gemini CLI
 
-1. **Install Gemini CLI** (if not already installed)
-   ```bash
-   pip install google-generativeai
-   ```
-
-2. **Configure MCP Server**
-   Create a configuration file `gemini_mcp_config.json`:
-
-   ```json
-   {
-     "servers": {
-       "quotes-server": {
-         "command": ["npm", "start"],
-         "cwd": "/Users/klaushofrichter/Development/mcp-1",
-         "description": "Star Trek quotes server"
-       }
-     }
-   }
-   ```
-
-3. **Run Gemini with MCP**
-   ```bash
-   gemini-cli --mcp-config gemini_mcp_config.json
-   ```
 
 ## 📖 API Documentation
 
@@ -328,7 +303,7 @@ npm run test:coverage # Run tests with coverage
    npm start
    ```
 
-3. **Restart your MCP client**: Completely quit and restart Claude Desktop, Cursor, or your MCP client.
+3. **Restart your MCP client**: Completely quit and restart Claude Desktop or Cursor.
 
 ### Common Issues
 

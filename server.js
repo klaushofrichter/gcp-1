@@ -103,6 +103,7 @@ server.registerTool(
     }
   },
   async ({ character }) => {
+    console.log('Get quote by character tool requested');
     const matchingQuotes = quotesData.filter(quote => 
       quote.by.toLowerCase().includes(character.toLowerCase())
     );
@@ -138,6 +139,7 @@ server.registerTool(
     inputSchema: {}
   },
   async () => {
+    console.log('Random quote tool requested');
     const randomQuote = quotesData[Math.floor(Math.random() * quotesData.length)];
     return {
       content: [{
