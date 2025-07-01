@@ -80,35 +80,31 @@ npm start
 
 ### 🤖 Claude Code
 
-1. **Install Claude Code Extension**
-   - Open VS Code
-   - Go to Extensions (Ctrl/Cmd + Shift + X)
-   - Search for "Claude Code" and install it
+1. **Install Claude Code CLI**
+   - Install "claude code" by following the [instructions](https://docs.anthropic.com/en/docs/claude-code/setup). 
 
 2. **Configure MCP Server**
-   - Open VS Code settings (Ctrl/Cmd + ,)
-   - Search for "Claude Code MCP" or navigate to Extensions → Claude Code
-   - Add the MCP server configuration:
+   - Create a MCP server configuration in a `.mcp.json` file:
 
    ```json
-   {
-     "claudeCode.mcpServers": {
-       "quotes-server": {
-         "command": "npm",
-         "args": ["start"],
-         "cwd": "/Users/klaushofrichter/Development/mcp-1"
-       }
-     }
-   }
+  {
+    "mcpServers": {
+      "quotes-server": {
+        "type": "stdio",
+        "command": "node", 
+        "args": ["/Users/klaushofrichter/Development/mcp-1/server.js"],
+        "env": {}
+      }
+    }
+  }
    ```
 
-   **Important**: Update the `cwd` path to match your actual installation directory.
+   **Important**: Update the `args` path to match your actual installation directory.
 
-3. **Reload VS Code**
-   - Press Ctrl/Cmd + Shift + P
-   - Type "Developer: Reload Window" and select it
-   - The MCP server will be available in Claude Code
-
+3. **Run Claude**
+   - Launch claude code with the command line `claude`. You can check the MCP server
+     availability with the command `/mcp'. Use the server by asking for example:
+     `give me a quote by picard`. 
 
 
 ## 📖 API Documentation
