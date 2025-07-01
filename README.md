@@ -93,7 +93,7 @@ npm start
        "quotes-server": {
          "command": "npm",
          "args": ["start"],
-         "cwd": "/Users/klaushofrichter/Development/mcp-1",
+         "cwd": "/YOUR_PATH/mcp-1",
          "env": {}
        }
      }
@@ -118,7 +118,7 @@ npm start
         "quotes-server": {
           "type": "stdio",
           "command": "node", 
-          "args": ["/Users/klaushofrichter/Development/mcp-1/server.js"],
+          "args": ["/YOUR-PATH/mcp-1/server.js"],
           "env": {}
         }
       }
