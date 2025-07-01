@@ -3,15 +3,9 @@ const express = require('express');
 const { randomUUID } = require('node:crypto');
 const { spawn } = require('child_process');
 
-// Mock quotes data for testing
-const mockQuotesData = [
-  { "quote": "Live long and prosper.", "by": "Spock" },
-  { "quote": "Space: the final frontier.", "by": "Captain James T. Kirk" },
-  { "quote": "Resistance is futile.", "by": "The Borg" },
-  { "quote": "Make it so.", "by": "Captain Jean-Luc Picard" },
-  { "quote": "I have been, and always shall be, your friend.", "by": "Spock" },
-  { "quote": "Logic is the beginning of wisdom, not the end.", "by": "Spock" }
-];
+// Import quotes data from the source file
+const quotesData = require('./quotes.json');
+const mockQuotesData = quotesData;
 
 describe('MCP HTTP Server', () => {
   let app;

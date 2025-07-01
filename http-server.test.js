@@ -4,33 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 
-// Mock quotes data for testing
-const mockQuotesData = [
-  {
-    "quote": "Live long and prosper.",
-    "by": "Spock"
-  },
-  {
-    "quote": "Space: the final frontier.",
-    "by": "Captain James T. Kirk"
-  },
-  {
-    "quote": "Resistance is futile.",
-    "by": "The Borg"
-  },
-  {
-    "quote": "Make it so.",
-    "by": "Captain Jean-Luc Picard"
-  },
-  {
-    "quote": "I have been, and always shall be, your friend.",
-    "by": "Spock"
-  },
-  {
-    "quote": "Logic is the beginning of wisdom, not the end.",
-    "by": "Spock"
-  }
-];
+// Import quotes data from the source file
+const quotesData = require('./quotes.json');
+const mockQuotesData = quotesData;
 
 // Mock fs.readFileSync to return our test data
 jest.mock('fs');
@@ -161,7 +137,7 @@ describe('HTTP REST API Server', () => {
       expect(response.status).toBe(200);
       expect(response.headers['content-type']).toBe('text/plain; charset=utf-8');
       expect(response.text).toContain('1. "Live long and prosper." - Spock');
-      expect(response.text).toContain('2. "Space: the final frontier." - Captain James T. Kirk');
+      expect(response.text).toContain('2. "Beam me up, Scotty." - Captain James T. Kirk');
       
       // Check that all quotes are present
       const lines = response.text.split('\n\n');

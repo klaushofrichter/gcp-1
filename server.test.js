@@ -1,31 +1,7 @@
 // Test the core functionality of the quotes server
-// Mock data - same structure as quotes.json
-const mockQuotesData = [
-  {
-    "quote": "Live long and prosper.",
-    "by": "Spock"
-  },
-  {
-    "quote": "Space: the final frontier.",
-    "by": "Captain James T. Kirk"
-  },
-  {
-    "quote": "Resistance is futile.",
-    "by": "The Borg"
-  },
-  {
-    "quote": "Make it so.",
-    "by": "Captain Jean-Luc Picard"
-  },
-  {
-    "quote": "I have been, and always shall be, your friend.",
-    "by": "Spock"
-  },
-  {
-    "quote": "Logic is the beginning of wisdom, not the end.",
-    "by": "Spock"
-  }
-];
+// Import quotes data from the source file
+const quotesData = require('./quotes.json');
+const mockQuotesData = quotesData;
 
 // Extract the core logic functions from server.js for testing
 function getAllQuotesHandler(quotesData) {
@@ -119,7 +95,7 @@ describe('MCP Quotes Server Logic', () => {
       
       const parsedContent = JSON.parse(result.contents[0].text);
       expect(parsedContent).toEqual(mockQuotesData);
-      expect(parsedContent).toHaveLength(6);
+      expect(parsedContent).toHaveLength(mockQuotesData.length);
     });
 
     test('getRandomQuote should return a single random quote', async () => {
@@ -146,8 +122,8 @@ describe('MCP Quotes Server Logic', () => {
       
       const textContent = result.contents[0].text;
       expect(textContent).toContain('1. "Live long and prosper." - Spock');
-      expect(textContent).toContain('2. "Space: the final frontier." - Captain James T. Kirk');
-      expect(textContent).toContain('6. "Logic is the beginning of wisdom, not the end." - Spock');
+      expect(textContent).toContain('2. "Beam me up, Scotty." - Captain James T. Kirk');
+      expect(textContent).toContain('8. "Logic is the beginning of wisdom, not the end." - Spock');
     });
 
     test('getQuotesText should format quotes with correct numbering', async () => {
@@ -207,7 +183,7 @@ describe('MCP Quotes Server Logic', () => {
       
       const text = result.content[0].text;
       expect(text).toContain('Quotes from Kirk:');
-      expect(text).toContain('Space: the final frontier.');
+      expect(text).toContain('Beam me up, Scotty.');
     });
 
     test('getQuoteByCharacter should find quotes by Picard', async () => {
@@ -234,7 +210,7 @@ describe('MCP Quotes Server Logic', () => {
       
       const text = result.content[0].text;
       expect(text).toContain('Quotes from Captain:');
-      expect(text).toContain('Space: the final frontier.');
+      expect(text).toContain('Beam me up, Scotty.');
       expect(text).toContain('Make it so.');
     });
 
