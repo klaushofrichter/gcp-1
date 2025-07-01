@@ -23,7 +23,7 @@ A comprehensive Model Context Protocol (MCP) server that provides Star Trek quot
 
 - Node.js (version 16 or higher)
 - npm (comes with Node.js)
-- MCP-compatible client (Cursor or Claude Desktop)
+- MCP-compatible client (Cursor or Claude Code)
 
 ## 🛠️ Installation
 
@@ -78,18 +78,21 @@ npm start
    - Restart Cursor IDE to load the MCP server
    - The quotes server will be available in your AI chat
 
-### 🤖 Claude Desktop
+### 🤖 Claude Code
 
-1. **Locate Claude Desktop Config**
-   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+1. **Install Claude Code Extension**
+   - Open VS Code
+   - Go to Extensions (Ctrl/Cmd + Shift + X)
+   - Search for "Claude Code" and install it
 
-2. **Add Server Configuration**
-   Edit or create the config file:
+2. **Configure MCP Server**
+   - Open VS Code settings (Ctrl/Cmd + ,)
+   - Search for "Claude Code MCP" or navigate to Extensions → Claude Code
+   - Add the MCP server configuration:
 
    ```json
    {
-     "mcpServers": {
+     "claudeCode.mcpServers": {
        "quotes-server": {
          "command": "npm",
          "args": ["start"],
@@ -101,9 +104,10 @@ npm start
 
    **Important**: Update the `cwd` path to match your actual installation directory.
 
-3. **Restart Claude Desktop**
-   - Completely quit and restart Claude Desktop
-   - The server will be loaded automatically
+3. **Reload VS Code**
+   - Press Ctrl/Cmd + Shift + P
+   - Type "Developer: Reload Window" and select it
+   - The MCP server will be available in Claude Code
 
 
 
@@ -303,7 +307,7 @@ npm run test:coverage # Run tests with coverage
    npm start
    ```
 
-3. **Restart your MCP client**: Completely quit and restart Claude Desktop or Cursor.
+3. **Restart your MCP client**: Reload VS Code (for Claude Code) or restart Cursor.
 
 ### Common Issues
 
