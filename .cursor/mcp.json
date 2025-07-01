@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "quotes-server": {
-      "type": "stdio",
-      "command": "node",
-      "args": [ "/users/klaushofrichter/Development/mcp-1/server.js" ],
+      "type": "http",
+      "url": "http://localhost:3001/mcp",
       "env": {}
     }
   }

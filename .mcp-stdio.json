@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "quotes-server-stdio": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/klaushofrichter/Development/mcp-1/server.js"],
+      "env": {},
+      "description": "Star Trek Quotes MCP Server via stdio transport"
+    }
+  }
+} 
