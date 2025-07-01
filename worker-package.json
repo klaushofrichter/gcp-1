@@ -1,0 +1,47 @@
+{
+  "name": "quotes-mcp-worker",
+  "version": "1.0.0",
+  "description": "Star Trek Quotes MCP Server for Cloudflare Workers",
+  "main": "cloudflare-worker-mcp.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env development",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run cloudflare-worker-mcp.test.js",
+    "test:integration": "vitest run cloudflare-worker-integration.test.js",
+    "test:coverage": "vitest run --coverage",
+    "test:ci": "vitest run --reporter=junit --outputFile=test-results.xml",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "validate": "npm run test:all && npm run deploy:staging"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "@edge-runtime/vm": "^4.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "wrangler": "^3.84.0",
+    "vitest": "^2.0.0",
+    "undici": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cloudflare-workers",
+    "star-trek",
+    "quotes",
+    "ai"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+} 
