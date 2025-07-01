@@ -112,20 +112,20 @@ npm start
 2. **Configure MCP Server**
    - Create a MCP server configuration in a `.mcp.json` file:
 
-   ```json
-  {
-    "mcpServers": {
-      "quotes-server": {
-        "type": "stdio",
-        "command": "node", 
-        "args": ["/Users/klaushofrichter/Development/mcp-1/server.js"],
-        "env": {}
+    ```json
+    {
+      "mcpServers": {
+        "quotes-server": {
+          "type": "stdio",
+          "command": "node", 
+          "args": ["/Users/klaushofrichter/Development/mcp-1/server.js"],
+          "env": {}
+        }
       }
     }
-  }
-   ```
+    ```
 
-   **Important**: Update the `args` path to match your actual installation directory.
+  **Important**: Update the `args` path to match your actual installation directory.
 
 3. **Run Claude**
    - Launch claude code with the command line `claude`. You can check the MCP server
