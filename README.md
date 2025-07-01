@@ -356,27 +356,31 @@ Server will start on `http://127.0.0.1:3001` with the following output:
 
 #### MCP Client Configuration
 
-**For MCP-compatible tools:**
+**HTTP MCP server for MCP-compatible tools such as Cursor IDE:**
+
+Run the HTTP MCP server with `npm run start:mcp-http` and add this configuration to cursor:
 ```json
 {
   "mcpServers": {
     "quotes-server-http": {
-      "type": "streamableHttp", 
+      "type": "http", 
       "url": "http://127.0.0.1:3001/mcp"
     }
   }
 }
 ```
 
-**For Cursor IDE:**
+**For Cursor IDE using stdio:**
+There is no need to run a server as the MCP client invokes the server per commandline. 
+Configure the local installation like this: 
 ```json
 {
   "mcpServers": {
-    "quotes-http": {
-      "type": "stdio",
+    "quotes-server": {
+      "type":"stdio",
       "command": "node",
-      "args": ["/path/to/mcp-1/mcp-server-http.js"],
-      "env": {"PORT": "3001"}
+      "args": ["/YOUR-PATH/mcp-1/server.js"],
+      "env": {}
     }
   }
 }
