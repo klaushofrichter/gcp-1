@@ -793,29 +793,29 @@ curl http://localhost:3000/health
 
 ## 🧪 Testing
 
-The project includes comprehensive test suites with **101 test cases** total across all four server implementations, plus 4 additional tests for future MCP transport enhancements.
+The project includes comprehensive test suites with **101 test cases** total across all four server implementations (84 core functionality + 17 integration tests), plus 4 additional tests for future MCP transport enhancements.
 
 ### Run Tests
 ```bash
-# Run core server tests (64 total)
+# Run ALL FOUR server implementations (84 total: 64 core + 20 worker)
 npm test
 
-# Run all worker tests (37 total: 20 passed + 17 passed + 4 skipped)
-npm run test:worker-all
-
-# Run all tests across all implementations (101 total)
+# Run all tests including integration (101 total: 64 core + 20 worker + 17 integration)
 npm run test:all
 
-# Run specific test suites
-npm run test:mcp          # MCP server tests only (18 tests)
-npm run test:http         # HTTP server tests only (28 tests)
-npm run test:mcp-http     # MCP HTTP server tests only (18 tests)
+# Run specific test suites by implementation
+npm run test:core         # First 3 server implementations (64 tests)
+npm run test:mcp          # MCP stdio server only (18 tests)
+npm run test:http         # REST API server only (28 tests)
+npm run test:mcp-http     # MCP HTTP server only (18 tests)
 npm run test:worker       # Cloudflare Worker unit tests (20 tests)
-npm run test:integration  # Cloudflare Worker integration tests (17 tests)
+npm run test:worker-all   # Worker unit + integration tests (37 tests)
+npm run test:integration  # Worker integration tests only (17 tests)
 
 # Development testing
-npm run test:watch        # Run tests in watch mode
-npm run test:coverage     # Run with coverage reporting
+npm run test:watch        # Run core tests in watch mode
+npm run test:coverage     # Run core tests with coverage reporting
+npm run test:worker-coverage  # Run worker tests with coverage
 ```
 
 ### Test Coverage
@@ -893,28 +893,44 @@ npm run test:coverage     # Run with coverage reporting
 
 ```
 mcp-quotes-server/
-├── server.js              # MCP server (stdio transport)
-├── mcp-server-http.js     # MCP server (HTTP transport)  
-├── http-server.js         # REST API server implementation
-├── quotes.json            # Star Trek quotes data
-├── server.test.js         # MCP server test suite (18 tests)
-├── http-server.test.js    # HTTP server test suite (28 tests)
-├── mcp-server-http.test.js # MCP HTTP server test suite (18 tests)
-├── package.json           # Dependencies and scripts
-├── package-lock.json      # Locked dependency versions
-└── README.md              # This documentation
+├── server.js                           # MCP server (stdio transport)
+├── mcp-server-http.js                  # MCP server (HTTP transport)  
+├── http-server.js                      # REST API server implementation
+├── cloudflare-worker-mcp.js            # Cloudflare Workers MCP server
+├── quotes.json                         # Star Trek quotes data
+├── server.test.js                      # MCP stdio server tests (18 tests)
+├── http-server.test.js                 # REST API server tests (28 tests)
+├── mcp-server-http.test.js             # MCP HTTP server tests (18 tests)
+├── cloudflare-worker-mcp.test.js       # Worker unit tests (20 tests)
+├── cloudflare-worker-integration.test.js # Worker integration tests (17 tests)
+├── wrangler.toml                       # Cloudflare Workers configuration
+├── package.json                        # Dependencies and scripts
+├── package-lock.json                   # Locked dependency versions
+└── README.md                           # This documentation
 ```
 
 ## 🔧 Development
 
 ### Project Scripts
 ```bash
+# Server startup
 npm start              # Start the MCP server (stdio transport)
 npm run start:mcp-http # Start the MCP server (HTTP transport)  
 npm run start:http     # Start the REST API server (HTTP)
-npm test               # Run test suite
-npm run test:watch     # Run tests in watch mode
-npm run test:coverage  # Run tests with coverage
+
+# Testing all four implementations
+npm test               # Run all four server implementations (84 tests)
+npm run test:all       # Run all tests including integration (101 tests)
+npm run test:core      # Run first 3 implementations only (64 tests)
+
+# Development testing
+npm run test:watch     # Run core tests in watch mode
+npm run test:coverage  # Run core tests with coverage
+
+# Cloudflare Workers
+npm run worker:deploy  # Deploy to Cloudflare Workers
+npm run worker:dev     # Run Workers locally with Wrangler
+npm run worker:validate # Test + deploy + validate pipeline
 ```
 
 ### Adding New Quotes

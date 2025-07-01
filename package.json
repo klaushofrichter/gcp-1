@@ -8,7 +8,8 @@
     "start": "node server.js",
     "start:http": "node http-server.js",
     "start:mcp-http": "node mcp-server-http.js",
-    "test": "jest --testPathPattern=\"(server|http-server|mcp-server-http)\\.test\\.js$\"",
+    "test": "npm run test:core && npm run test:worker",
+    "test:core": "jest --testPathPattern=\"(server|http-server|mcp-server-http)\\.test\\.js$\"",
     "test:mcp": "jest server.test.js",
     "test:http": "jest http-server.test.js",
     "test:mcp-http": "jest mcp-server-http.test.js",
@@ -18,7 +19,7 @@
     "test:integration": "vitest run cloudflare-worker-integration.test.js",
     "test:worker-coverage": "vitest run --coverage cloudflare-worker-mcp.test.js",
     "test:worker-all": "npm run test:worker && npm run test:integration",
-    "test:all": "npm run test && npm run test:worker-all",
+    "test:all": "npm run test:core && npm run test:worker-all",
     "worker:deploy": "wrangler deploy",
     "worker:dev": "wrangler dev",
     "worker:validate": "npm run test:worker && npm run worker:deploy && npm run test:integration"

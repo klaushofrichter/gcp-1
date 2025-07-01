@@ -256,7 +256,22 @@ export default {
         const sessionId = request.headers.get('mcp-session-id');
 
         if (request.method === 'POST') {
-          const body = await request.json();
+          let body;
+          try {
+            body = await request.json();
+          } catch (error) {
+            console.error('Failed to parse JSON body:', error);
+            return new Response(JSON.stringify({
+              error: 'Invalid JSON in request body',
+              message: error.message
+            }), {
+              status: 400,
+              headers: { 
+                'Content-Type': 'application/json',
+                ...corsHeaders
+              }
+            });
+          }
 
           // Create transport for new session or reuse existing
           const transport = new StreamableHTTPServerTransport({
@@ -296,7 +311,21 @@ export default {
           };
 
           // Handle the request through the transport
-          await transport.handleRequest(mcpRequest, mcpResponse, body);
+          try {
+            await transport.handleRequest(mcpRequest, mcpResponse, body);
+          } catch (transportError) {
+            console.error('Transport error:', transportError);
+            return new Response(JSON.stringify({
+              error: 'MCP transport error',
+              message: transportError.message
+            }), {
+              status: 500,
+              headers: { 
+                'Content-Type': 'application/json',
+                ...corsHeaders
+              }
+            });
+          }
 
           // Convert response to Workers Response
           const responseHeaders = {};

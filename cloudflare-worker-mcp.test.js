@@ -16,12 +16,16 @@ const env = {
 // Helper function to create Request objects
 function createRequest(method, path, options = {}) {
   const url = `https://quotes-mcp-server.test.workers.dev${path}`;
+  
+  // Only set Content-Type for requests that have a body
+  const headers = { ...options.headers };
+  if (options.body) {
+    headers['Content-Type'] = 'application/json';
+  }
+  
   return new Request(url, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
+    headers,
     body: options.body ? JSON.stringify(options.body) : undefined
   });
 }
@@ -187,20 +191,31 @@ describe('Cloudflare Worker MCP Server', () => {
 
   describe('Error Handling', () => {
     it('should handle malformed JSON in POST requests', async () => {
+      // Temporarily suppress console.error for this test since we're intentionally testing error handling
+      const originalConsoleError = console.error;
+      console.error = () => {}; // Suppress error output
+      
+      console.log('📝 Testing malformed JSON handling (expected error behavior)');
+      
       const request = new Request('https://quotes-mcp-server.test.workers.dev/mcp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: '{ invalid json }'
+        body: '{ invalid json }' // Intentionally malformed JSON
       });
 
       const response = await worker.fetch(request, env, {});
       
-      expect(response.status).toBe(500);
+      // Restore console.error
+      console.error = originalConsoleError;
+      
+      expect(response.status).toBe(400);
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
       
       const data = await response.json();
-      expect(data.error).toBe('Internal server error');
+      expect(data.error).toBe('Invalid JSON in request body');
       expect(data.message).toBeDefined();
+      
+      console.log('✅ Malformed JSON properly handled with 400 status');
     });
 
     it('should handle unsupported HTTP methods on /mcp', async () => {
