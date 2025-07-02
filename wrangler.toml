@@ -1,3 +1,7 @@
-name = "quotes-mcp-server-v2"
+name = "quotes-mcp-server"
 main = "worker.js"
 compatibility_date = "2024-11-05"
+
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = true

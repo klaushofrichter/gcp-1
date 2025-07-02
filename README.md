@@ -452,7 +452,7 @@ npm run test:cloudflare
 
 **🎉 Your MCP server is now live globally!**
 
-Example deployment URL: `https://quotes-mcp-server-v2.YOUR-SUBDOMAIN.workers.dev`
+Example deployment URL: `https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev`
 
 ### 📊 Performance Metrics
 
@@ -489,7 +489,7 @@ Access-Control-Allow-Headers: Content-Type
 #### **Direct HTTP API Access**
 ```bash
 # MCP protocol request
-curl -X POST https://quotes-mcp-server-v2.YOUR-SUBDOMAIN.workers.dev \
+curl -X POST https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05"},"id":1}'
 ```

@@ -3,7 +3,7 @@
 # Quick Test Script for MCP Server
 # Tests the Cloudflare Workers deployment
 
-SERVER_URL="https://quotes-mcp-server-v2.klaushofrichter.workers.dev"
+SERVER_URL="https://quotes-mcp-server.klaushofrichter.workers.dev"
 
 echo "🧪 Quick MCP Server Test"
 echo "========================"

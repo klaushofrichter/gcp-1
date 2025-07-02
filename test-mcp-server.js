@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 // Test suite for Cloudflare Workers MCP Server
-// Tests the deployed server at: https://quotes-mcp-server-v2.klaushofrichter.workers.dev
+// Tests the deployed server at: https://quotes-mcp-server.klaushofrichter.workers.dev
 
-const MCP_SERVER_URL = 'https://quotes-mcp-server-v2.klaushofrichter.workers.dev';
+const MCP_SERVER_URL = 'https://quotes-mcp-server.klaushofrichter.workers.dev';
 
 // Test helper function
 async function mcpRequest(method, params = {}, id = 1) {
