@@ -4,11 +4,6 @@ This guide shows how to deploy your MCP server to Cloudflare Workers.
 
 ## 🏗️ Architecture Changes
 
-Your current `mcp-server-http.js` uses:
-- ❌ Express.js (not supported in Workers)
-- ❌ Node.js file system (fs, path)
-- ❌ In-memory session storage
-
 The Cloudflare Worker version (`cloudflare-worker-mcp.js`) uses:
 - ✅ Workers Request/Response API
 - ✅ ES6 JSON imports (`import quotesData from './quotes.json'`)
@@ -91,15 +86,6 @@ When you run `npm run deploy`, Wrangler automatically bundles:
 2. **JSON data**: `quotes.json` (via import)
 3. **Dependencies**: All npm packages used
 4. **Configuration**: Settings from `wrangler.toml`
-
-### No Additional Configuration Required
-
-Unlike some deployment platforms, Cloudflare Workers don't require:
-- ❌ Asset configuration in `wrangler.toml`
-- ❌ Special build steps for JSON files  
-- ❌ Runtime file loading mechanisms
-
-The ES6 import statement is all you need!
 
 ## 🔧 Configuration Options
 
