@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 # no test results in the repo
 test-results.json
 test-results/
+
+# vi swaps
+*.swp
