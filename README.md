@@ -121,7 +121,26 @@ cd mcp-quotes-server
 npm install
 ```
 
-### 3. Verify Installation
+### 3. Set Up Environment Variables (for Testing)
+For running tests and accessing the Cloudflare deployment, you'll need to configure API keys:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and replace YOUR_API_KEY with a valid API key
+# The file should contain:
+# QUOTES_MCP_API_KEY=your_actual_api_key_here
+```
+
+**Important Notes:**
+- The `.env` file is used by test scripts (`test-mcp-server.js`, `quick-test.sh`)
+- This is only needed if you want to test the **Cloudflare Workers deployment**
+- Local MCP servers (`npm start`, `npm run start:mcp-http`) do **not** require API keys
+- The `.env` file is automatically loaded using the `dotenv` package
+- Contact the administrator for valid API keys for the Cloudflare deployment
+
+### 4. Verify Installation
 ```bash
 # Test the server
 npm test
@@ -468,12 +487,7 @@ The Cloudflare Workers deployment now includes API key protection for security:
 
 See `api-config.md` for setup instructions.
 
-**Note**: Test scripts automatically load the API key from `.env` file:
-```bash
-# Copy the example and add your API key
-cp .env.example .env
-# Edit .env and replace YOUR_API_KEY with a valid key
-```
+**Note**: Test scripts automatically load the API key from `.env` file. See the [Environment Variables setup](#3-set-up-environment-variables-for-testing) section for detailed instructions.
 
 ### 📊 Performance Metrics
 
@@ -540,8 +554,8 @@ npm run test:core          # Local server implementations (64 tests)
 npm run test:mcp           # MCP stdio server only (20 tests)
 npm run test:http          # REST API server only (17 tests)
 npm run test:mcp-http      # MCP HTTP server only (27 tests)
-npm run test:cloudflare    # Cloudflare integration tests (15 tests)
-npm run test:cloudflare-quick  # Quick validation script (5 tests)
+npm run test:cloudflare    # Cloudflare integration tests (15 tests) - requires .env
+npm run test:cloudflare-quick  # Quick validation script (5 tests) - requires .env
 
 # Development testing
 npm run test:watch         # Run core tests in watch mode

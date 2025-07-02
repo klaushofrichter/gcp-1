@@ -1,6 +1,6 @@
 # Manual Test Cases for Cloudflare MCP Server
 
-**Server URL:** `https://quotes-mcp-server.klaushofrichter.workers.dev`
+**Server URL:** `https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev`
 
 ## Prerequisites
 - `curl` command line tool
@@ -19,7 +19,7 @@ Install jq: `brew install jq` (macOS) or `sudo apt install jq` (Ubuntu)
 
 ### 1. 🔧 Initialize MCP Server
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -40,7 +40,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 2. 🛠️ List Available Tools
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -56,7 +56,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 3. 📚 List Available Resources
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -72,7 +72,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 4. 🖖 Get Spock Quotes (Tool)
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -92,7 +92,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 5. 🚀 Get Kirk Quotes (Tool)
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -112,7 +112,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 6. 👤 Get Nonexistent Character Quotes
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -132,7 +132,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 7. 🎲 Random Quote Tool
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -152,7 +152,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 8. 📖 Read All Quotes Resource
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -169,7 +169,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 9. 🎯 Read Random Quote Resource
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -186,7 +186,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 10. 📝 Read Text Format Resource
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -205,7 +205,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 11. ❌ Invalid Method
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -221,7 +221,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 12. ❌ Invalid Tool
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
@@ -241,7 +241,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 
 ### 13. ❌ HTTP GET (Should Fail)
 ```bash
-curl -X GET "https://quotes-mcp-server.klaushofrichter.workers.dev"
+curl -X GET "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev"
 ```
 
 **Expected:** 405 Method Not Allowed
@@ -250,7 +250,7 @@ curl -X GET "https://quotes-mcp-server.klaushofrichter.workers.dev"
 
 ### 14. ❌ Malformed JSON
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"invalid": json}'
@@ -271,21 +271,21 @@ echo "========================"
 
 # Test 1: List tools
 echo "1. Testing tools/list..."
-curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -s -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | jq '.result.tools[].name'
 
 # Test 2: Get Spock quote
 echo -e "\n2. Getting Spock quotes..."
-curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -s -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get-quote-by-character", "arguments": {"character": "Spock"}}}' | jq -r '.result.content[0].text'
 
 # Test 3: Random quote
 echo -e "\n3. Getting random quote..."
-curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -s -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "random-quote-tool", "arguments": {}}}' | jq -r '.result.content[0].text'
@@ -301,7 +301,7 @@ Run with: `chmod +x quick-test.sh && ./quick-test.sh`
 
 ```bash
 # Test response time
-time curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+time curl -s -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' > /dev/null
@@ -315,7 +315,7 @@ time curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 # Test random quotes 5 times
 for i in {1..5}; do
   echo "Random quote $i:"
-  curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+  curl -s -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
     -H "Content-Type: application/json" \
   -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
     -d '{"jsonrpc": "2.0", "id": '$i', "method": "tools/call", "params": {"name": "random-quote-tool", "arguments": {}}}' | jq -r '.result.content[0].text'

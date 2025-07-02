@@ -203,7 +203,7 @@ Tests use these environment variables:
 **Solutions**:
 ```bash
 # Check if Worker is deployed and accessible
-curl https://quotes-mcp-server.klaushofrichter.workers.dev/health
+curl https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/health
 
 # Verify wrangler.toml configuration
 cat wrangler.toml
@@ -294,7 +294,7 @@ npm run test:integration -- --grep "Performance"
 # Load testing with curl
 for i in {1..10}; do
   curl -w "@curl-format.txt" -o /dev/null -s \
-    https://quotes-mcp-server.klaushofrichter.workers.dev/health
+    https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/health
 done
 ```
 

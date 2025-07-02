@@ -4,7 +4,7 @@ This document summarizes all the test cases created for testing the Cloudflare W
 
 ## 🎯 Server Under Test
 
-**URL:** `https://quotes-mcp-server.klaushofrichter.workers.dev`
+**URL:** `https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev`
 
 **Features:**
 - 2 Tools: `get-quote-by-character`, `random-quote-tool`
@@ -89,7 +89,7 @@ npm run test:cloudflare-quick
 ```
 🧪 Quick MCP Server Test
 ========================
-Testing: https://quotes-mcp-server.klaushofrichter.workers.dev
+Testing: https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev
 
 1️⃣  Testing tools/list...
 Available tools:
@@ -124,7 +124,7 @@ Available resources:
 
 ### Spock Quotes (3 total)
 ```bash
-curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
+curl -X POST "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "get-quote-by-character", "arguments": {"character": "Spock"}}}'
 ```
@@ -190,7 +190,7 @@ These tests validate the MCP server that Cursor connects to via:
   "mcpServers": {
     "quotes-server": {
       "type": "http",
-      "url": "https://quotes-mcp-server.klaushofrichter.workers.dev"
+      "url": "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev"
     }
   }
 }
