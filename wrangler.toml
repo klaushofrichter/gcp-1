@@ -29,3 +29,7 @@ vars = { ENVIRONMENT = "development" }
 [env.staging]
 name = "quotes-mcp-server-staging"
 vars = { ENVIRONMENT = "staging" } 
+
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = true
