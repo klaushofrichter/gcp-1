@@ -1,9 +1,22 @@
 #!/usr/bin/env node
 
+// Load environment variables from .env file
+import dotenv from 'dotenv';
+dotenv.config();
+
 // Test suite for Cloudflare Workers MCP Server
 // Tests the deployed server at: https://quotes-mcp-server.klaushofrichter.workers.dev
 
 const MCP_SERVER_URL = 'https://quotes-mcp-server.klaushofrichter.workers.dev';
+
+// Get API key from environment variable (loaded from .env file)
+const API_KEY = process.env.QUOTES_MCP_API_KEY;
+
+if (!API_KEY) {
+  console.error('❌ Error: QUOTES_MCP_API_KEY not found');
+  console.error('Please create a .env file with: QUOTES_MCP_API_KEY=your_api_key');
+  process.exit(1);
+}
 
 // Test helper function
 async function mcpRequest(method, params = {}, id = 1) {
@@ -19,6 +32,7 @@ async function mcpRequest(method, params = {}, id = 1) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': API_KEY,
       },
       body: JSON.stringify(payload)
     });
@@ -28,6 +42,42 @@ async function mcpRequest(method, params = {}, id = 1) {
     }
 
     return await response.json();
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+// Test helper function for unauthenticated requests
+async function mcpRequestWithoutAuth(method, params = {}, id = 1, customApiKey = null) {
+  const payload = {
+    jsonrpc: '2.0',
+    id: id,
+    method: method,
+    ...(Object.keys(params).length > 0 && { params })
+  };
+
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add API key if provided (for testing invalid keys)
+    if (customApiKey !== null) {
+      headers['X-API-Key'] = customApiKey;
+    }
+
+    const response = await fetch(MCP_SERVER_URL, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
+
+    // Return both status and response for authentication tests
+    const jsonResponse = await response.json();
+    return {
+      status: response.status,
+      response: jsonResponse
+    };
   } catch (error) {
     return { error: error.message };
   }
@@ -344,6 +394,62 @@ const tests = [
         throw error;
       }
     }
+  },
+
+  {
+    name: '16. Test Missing API Key (401 Unauthorized)',
+    test: async () => {
+      const result = await mcpRequestWithoutAuth('initialize', {
+        protocolVersion: '2024-11-05',
+        capabilities: {
+          roots: {},
+          sampling: {}
+        },
+        clientInfo: {
+          name: 'test-client',
+          version: '1.0.0'
+        }
+      });
+      
+      console.log('Response status:', result.status);
+      console.log('Response:', JSON.stringify(result.response, null, 2));
+      
+      // Assertions
+      if (result.status !== 401) throw new Error(`Expected HTTP 401, got ${result.status}`);
+      if (!result.response.error) throw new Error('Should return error for missing API key');
+      if (result.response.error.code !== -32001) throw new Error(`Expected error code -32001, got ${result.response.error.code}`);
+      if (!result.response.error.message.includes('Missing API key')) throw new Error('Error message should mention missing API key');
+      
+      return 'PASSED';
+    }
+  },
+
+  {
+    name: '17. Test Invalid API Key (401 Unauthorized)',
+    test: async () => {
+      const result = await mcpRequestWithoutAuth('initialize', {
+        protocolVersion: '2024-11-05',
+        capabilities: {
+          roots: {},
+          sampling: {}
+        },
+        clientInfo: {
+          name: 'test-client',
+          version: '1.0.0'
+        }
+      }, 1, 'invalid-api-key-12345');
+      
+      console.log('Response status:', result.status);
+      console.log('Response:', JSON.stringify(result.response, null, 2));
+      
+      // Assertions
+      if (result.status !== 401) throw new Error(`Expected HTTP 401, got ${result.status}`);
+      if (!result.response.error) throw new Error('Should return error for invalid API key');
+      if (result.response.error.code !== -32002) throw new Error(`Expected error code -32002, got ${result.response.error.code}`);
+      if (!result.response.error.message.includes('Invalid API key')) throw new Error('Error message should mention invalid API key');
+      
+      return 'PASSED';
+    }
   }
 ];
 
@@ -383,4 +489,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   runTests().catch(console.error);
 }
 
-export { runTests, mcpRequest, MCP_SERVER_URL }; 
+export { runTests, mcpRequest, mcpRequestWithoutAuth, MCP_SERVER_URL }; 

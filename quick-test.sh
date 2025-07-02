@@ -5,6 +5,20 @@
 
 SERVER_URL="https://quotes-mcp-server.klaushofrichter.workers.dev"
 
+# Load environment variables from .env file if it exists
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
+# Get API key from environment variable (loaded from .env file)
+API_KEY="${QUOTES_MCP_API_KEY}"
+
+if [ -z "$API_KEY" ]; then
+  echo "❌ Error: QUOTES_MCP_API_KEY not found"
+  echo "Please create a .env file with: QUOTES_MCP_API_KEY=your_api_key"
+  exit 1
+fi
+
 echo "🧪 Quick MCP Server Test"
 echo "========================"
 echo "Testing: $SERVER_URL"
@@ -14,6 +28,7 @@ echo ""
 echo "1️⃣  Testing tools/list..."
 TOOLS=$(curl -s -X POST "$SERVER_URL" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}')
 
 if command -v jq &> /dev/null; then
@@ -28,6 +43,7 @@ echo ""
 echo "2️⃣  Getting Spock quotes..."
 SPOCK_RESPONSE=$(curl -s -X POST "$SERVER_URL" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get-quote-by-character", "arguments": {"character": "Spock"}}}')
 
 if command -v jq &> /dev/null; then
@@ -47,6 +63,7 @@ echo ""
 echo "3️⃣  Getting random quote..."
 RANDOM_RESPONSE=$(curl -s -X POST "$SERVER_URL" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "random-quote-tool", "arguments": {}}}')
 
 if command -v jq &> /dev/null; then
@@ -66,6 +83,7 @@ echo ""
 echo "4️⃣  Testing resources/list..."
 RESOURCES=$(curl -s -X POST "$SERVER_URL" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"jsonrpc": "2.0", "id": 4, "method": "resources/list"}')
 
 if command -v jq &> /dev/null; then
@@ -80,6 +98,7 @@ echo ""
 echo "5️⃣  Testing error handling (invalid method)..."
 ERROR_RESPONSE=$(curl -s -X POST "$SERVER_URL" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"jsonrpc": "2.0", "id": 5, "method": "invalid/method"}')
 
 if command -v jq &> /dev/null; then

@@ -9,11 +9,94 @@ import {
   getAvailableCharacters 
 } from './lib/quote-functions.js';
 
+// Validate API Key using KV store
+async function validateApiKey(request, env) {
+  const apiKey = request.headers.get('X-API-Key');
+  
+  if (!apiKey) {
+    return {
+      valid: false,
+      error: {
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32001,
+          message: 'Missing API key. Please include X-API-Key header.'
+        }
+      }
+    };
+  }
+  
+  try {
+    // Get valid API keys from KV store
+    const validKeysJson = await env.QUOTES_MCP_KEYS.get('valid_keys');
+    if (!validKeysJson) {
+      console.error('No valid_keys found in KV store');
+      return {
+        valid: false,
+        error: {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32003,
+            message: 'API key validation unavailable. Please try again later.'
+          }
+        }
+      };
+    }
+    
+    const validKeys = JSON.parse(validKeysJson);
+    if (!Array.isArray(validKeys) || !validKeys.includes(apiKey)) {
+      return {
+        valid: false,
+        error: {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32002,
+            message: 'Invalid API key. Access denied.'
+          }
+        }
+      };
+    }
+    
+    return { valid: true };
+    
+  } catch (error) {
+    console.error('Error validating API key:', error);
+    return {
+      valid: false,
+      error: {
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32003,
+          message: 'API key validation unavailable. Please try again later.'
+        }
+      }
+    };
+  }
+}
+
 // HTTP handler for Cloudflare Workers
 export default {
   async fetch(request, env, ctx) {
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
+    }
+
+    // Validate API Key first
+    const apiValidation = await validateApiKey(request, env);
+    if (!apiValidation.valid) {
+      return new Response(JSON.stringify(apiValidation.error), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type, X-API-Key'
+        }
+      });
     }
 
     try {
@@ -245,7 +328,7 @@ export default {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'POST',
-          'Access-Control-Allow-Headers': 'Content-Type'
+          'Access-Control-Allow-Headers': 'Content-Type, X-API-Key'
         }
       });
       

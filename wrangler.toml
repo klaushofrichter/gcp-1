@@ -2,6 +2,11 @@ name = "quotes-mcp-server"
 main = "worker.js"
 compatibility_date = "2024-11-05"
 
+# KV namespace binding for API keys
+[[kv_namespaces]]
+binding = "QUOTES_MCP_KEYS"
+id = "3837df75d0c14cc6bac4dbf3b6eefaf8"
+
 # wrangler.toml (wrangler v3.88.0^)
 [observability.logs]
 enabled = true

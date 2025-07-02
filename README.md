@@ -454,6 +454,27 @@ npm run test:cloudflare
 
 Example deployment URL: `https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev`
 
+### 🔐 API Key Authentication
+
+The Cloudflare Workers deployment now includes API key protection for security:
+
+- **Required Header**: All requests must include `X-API-Key` header
+- **Valid API Keys**: Stored securely in Cloudflare KV store
+  - Contact the administrator for valid API keys
+  - Keys are managed dynamically via `wrangler kv` commands
+- **Error Responses**: 
+  - Missing API key: HTTP 401 with error code -32001
+  - Invalid API key: HTTP 401 with error code -32002
+
+See `api-config.md` for setup instructions.
+
+**Note**: Test scripts automatically load the API key from `.env` file:
+```bash
+# Copy the example and add your API key
+cp .env.example .env
+# Edit .env and replace YOUR_API_KEY with a valid key
+```
+
 ### 📊 Performance Metrics
 
 Our production deployment achieves:
@@ -488,9 +509,10 @@ Access-Control-Allow-Headers: Content-Type
 
 #### **Direct HTTP API Access**
 ```bash
-# MCP protocol request
+# MCP protocol request (requires API key)
 curl -X POST https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05"},"id":1}'
 ```
 

@@ -5,8 +5,13 @@
 ## Prerequisites
 - `curl` command line tool
 - `jq` for pretty JSON formatting (optional but recommended)
+- **API Key**: Set environment variable `QUOTES_MCP_API_KEY` with a valid API key
+  - Contact administrator for valid API keys
+  - Keys are managed via Cloudflare KV store
 
 Install jq: `brew install jq` (macOS) or `sudo apt install jq` (Ubuntu)
+
+**Note:** All requests require an `X-API-Key` header for authentication.
 
 ---
 
@@ -16,6 +21,7 @@ Install jq: `brew install jq` (macOS) or `sudo apt install jq` (Ubuntu)
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -36,6 +42,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 2,
@@ -51,6 +58,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
@@ -66,6 +74,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 4,
@@ -85,6 +94,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 5,
@@ -104,6 +114,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 6,
@@ -123,6 +134,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 7,
@@ -142,6 +154,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 8,
@@ -158,6 +171,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 9,
@@ -174,6 +188,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 10,
@@ -192,6 +207,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 11,
@@ -207,6 +223,7 @@ curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{
     "jsonrpc": "2.0",
     "id": 12,
@@ -235,6 +252,7 @@ curl -X GET "https://quotes-mcp-server.klaushofrichter.workers.dev"
 ```bash
 curl -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"invalid": json}'
 ```
 
@@ -255,18 +273,21 @@ echo "========================"
 echo "1. Testing tools/list..."
 curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | jq '.result.tools[].name'
 
 # Test 2: Get Spock quote
 echo -e "\n2. Getting Spock quotes..."
 curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get-quote-by-character", "arguments": {"character": "Spock"}}}' | jq -r '.result.content[0].text'
 
 # Test 3: Random quote
 echo -e "\n3. Getting random quote..."
 curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "random-quote-tool", "arguments": {}}}' | jq -r '.result.content[0].text'
 
 echo -e "\n✅ Tests completed!"
@@ -282,6 +303,7 @@ Run with: `chmod +x quick-test.sh && ./quick-test.sh`
 # Test response time
 time curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
   -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' > /dev/null
 ```
 
@@ -295,6 +317,7 @@ for i in {1..5}; do
   echo "Random quote $i:"
   curl -s -X POST "https://quotes-mcp-server.klaushofrichter.workers.dev" \
     -H "Content-Type: application/json" \
+  -H "X-API-Key: ${QUOTES_MCP_API_KEY:-YOUR_API_KEY}" \
     -d '{"jsonrpc": "2.0", "id": '$i', "method": "tools/call", "params": {"name": "random-quote-tool", "arguments": {}}}' | jq -r '.result.content[0].text'
   echo
 done
