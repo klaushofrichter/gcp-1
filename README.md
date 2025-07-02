@@ -4,6 +4,8 @@ A comprehensive Model Context Protocol (MCP) server that provides Star Trek quot
 
 This project features a **shared library architecture** that eliminates code duplication across four different server implementations while maintaining consistent functionality and behavior.
 
+The code was mostly created by Claude 4 / Cursor. 
+
 ## 🏗️ Architecture
 
 ### Shared Libraries (`lib/`)
@@ -191,9 +193,9 @@ Returns the complete collection of quotes as JSON.
 **Response Format:**
 ```json
 [
-{
-  "quote": "Live long and prosper.",
-  "by": "Spock"
+  {
+    "quote": "Live long and prosper.",
+    "by": "Spock"
   },
   {
     "quote": "Space: the final frontier.",
@@ -1105,10 +1107,9 @@ import { mockQuotesData, createTestHandlers } from './lib/test-helpers.js';
 └─── 📦 lib/test-helpers.js ←── All Test Files
 ```
 
-### 🎯 Benefits of This Architecture
+### 🎯 Benefits of this Architecture
 
 #### **🔄 DRY Principle (Don't Repeat Yourself)**
-- **454+ lines of duplicate code eliminated**
 - **Single source of truth** for all business logic
 - **Centralized bug fixes** - fix once, fixes everywhere
 
