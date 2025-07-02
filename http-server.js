@@ -3,6 +3,18 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { 
+  getApiInfo,
+  getHealthCheck,
+  handleGetAllQuotes,
+  handleGetRandomQuote,
+  handleGetQuotesText,
+  handleGetQuotesByCharacter,
+  handleGetCharacters,
+  handleSearchQuotes,
+  handle404NotFound,
+  handleError
+} from './lib/rest-api-helpers.js';
 
 // Get current directory in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -32,200 +44,108 @@ app.use((req, res, next) => {
   next();
 });
 
-// Root endpoint - API info
+// Root endpoint - API info using shared helper
 app.get('/', (req, res) => {
-  res.json({
-    name: 'Star Trek Quotes API',
-    version: '1.0.0',
-    description: 'REST API for Star Trek quotes',
-    endpoints: {
-      'GET /': 'API information',
-      'GET /quotes': 'Get all quotes',
-      'GET /quotes/random': 'Get a random quote',
-      'GET /quotes/text': 'Get all quotes as formatted text',
-      'GET /quotes/character/:name': 'Get quotes by character name',
-      'GET /health': 'Health check'
-    },
-    totalQuotes: quotesData.length
-  });
+  try {
+    const apiInfo = getApiInfo(quotesData);
+    res.json(apiInfo);
+  } catch (error) {
+    const errorResponse = handleError('Failed to get API information', error);
+    res.status(errorResponse.status).json(errorResponse);
+  }
 });
 
-// Health check endpoint
+// Health check endpoint using shared helper
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    quotesLoaded: quotesData.length
-  });
+  try {
+    const healthInfo = getHealthCheck(quotesData);
+    res.json(healthInfo);
+  } catch (error) {
+    const errorResponse = handleError('Health check failed', error);
+    res.status(errorResponse.status).json(errorResponse);
+  }
 });
 
-// Get all quotes (equivalent to quotes://all resource)
+// Get all quotes using shared helper
 app.get('/quotes', (req, res) => {
   try {
-    res.json({
-      success: true,
-      data: quotesData,
-      total: quotesData.length
-    });
+    const result = handleGetAllQuotes(quotesData);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to retrieve quotes',
-      message: error.message
-    });
+    const errorResponse = handleError('Failed to retrieve quotes', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// Get random quote (equivalent to quotes://random resource)
+// Get random quote using shared helper
 app.get('/quotes/random', (req, res) => {
   try {
-    if (quotesData.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No quotes available'
-      });
+    const result = handleGetRandomQuote(quotesData);
+    if (result.status) {
+      return res.status(result.status).json(result);
     }
-    
-    const randomQuote = quotesData[Math.floor(Math.random() * quotesData.length)];
-    res.json({
-      success: true,
-      data: randomQuote
-    });
+    res.json(result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to get random quote',
-      message: error.message
-    });
+    const errorResponse = handleError('Failed to get random quote', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// Get quotes as formatted text (equivalent to quotes://text resource)
+// Get quotes as formatted text using shared helper
 app.get('/quotes/text', (req, res) => {
   try {
-    const textContent = quotesData
-      .map((item, index) => `${index + 1}. "${item.quote}" - ${item.by}`)
-      .join('\n\n');
-    
+    const textContent = handleGetQuotesText(quotesData);
     res.setHeader('Content-Type', 'text/plain');
     res.send(textContent);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to format quotes as text',
-      message: error.message
-    });
+    const errorResponse = handleError('Failed to format quotes as text', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// Get quotes by character (equivalent to get-quote-by-character tool)
+// Get quotes by character using shared helper
 app.get('/quotes/character/:name', (req, res) => {
   try {
-    const character = req.params.name;
-    
-    if (!character || character.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        error: 'Character name is required'
-      });
+    const result = handleGetQuotesByCharacter(quotesData, req.params.name);
+    if (result.status) {
+      return res.status(result.status).json(result);
     }
-    
-    const matchingQuotes = quotesData.filter(quote => 
-      quote.by.toLowerCase().includes(character.toLowerCase())
-    );
-    
-    if (matchingQuotes.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: `No quotes found for character "${character}"`,
-        availableCharacters: [...new Set(quotesData.map(q => q.by))].sort(),
-        suggestion: 'Try searching for: Spock, Kirk, Picard, or Borg'
-      });
-    }
-    
-    res.json({
-      success: true,
-      character: character,
-      data: matchingQuotes,
-      total: matchingQuotes.length
-    });
+    res.json(result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to search quotes by character',
-      message: error.message
-    });
+    const errorResponse = handleError('Failed to search quotes by character', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// Get available characters
+// Get available characters using shared helper
 app.get('/characters', (req, res) => {
   try {
-    const characters = [...new Set(quotesData.map(q => q.by))].sort();
-    res.json({
-      success: true,
-      data: characters,
-      total: characters.length
-    });
+    const result = handleGetCharacters(quotesData);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to get characters',
-      message: error.message
-    });
+    const errorResponse = handleError('Failed to get characters', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// Search quotes (bonus endpoint)
+// Search quotes using shared helper
 app.get('/search', (req, res) => {
   try {
-    const query = req.query.q;
-    
-    if (!query || query.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        error: 'Search query parameter "q" is required',
-        example: '/search?q=logic'
-      });
+    const result = handleSearchQuotes(quotesData, req.query.q);
+    if (result.status) {
+      return res.status(result.status).json(result);
     }
-    
-    const searchTerm = query.toLowerCase();
-    const matchingQuotes = quotesData.filter(quote => 
-      quote.quote.toLowerCase().includes(searchTerm) ||
-      quote.by.toLowerCase().includes(searchTerm)
-    );
-    
-    res.json({
-      success: true,
-      query: query,
-      data: matchingQuotes,
-      total: matchingQuotes.length
-    });
+    res.json(result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Search failed',
-      message: error.message
-    });
+    const errorResponse = handleError('Search failed', error);
+    res.status(errorResponse.status).json(errorResponse);
   }
 });
 
-// 404 handler for undefined routes
+// 404 handler using shared helper
 app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Endpoint not found',
-    availableEndpoints: [
-      'GET /',
-      'GET /quotes',
-      'GET /quotes/random',
-      'GET /quotes/text',
-      'GET /quotes/character/:name',
-      'GET /characters',
-      'GET /search?q=term',
-      'GET /health'
-    ]
-  });
+  const result = handle404NotFound();
+  res.status(result.status).json(result);
 });
 
 // Error handling middleware

@@ -2,6 +2,33 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides Star Trek quotes through resources and tools. Built with the modern MCP SDK v1.13.2, this server demonstrates how to create and deploy MCP resources for AI assistants.
 
+This project features a **shared library architecture** that eliminates code duplication across four different server implementations while maintaining consistent functionality and behavior.
+
+## 🏗️ Architecture
+
+### Shared Libraries (`lib/`)
+The project uses a modular architecture with shared libraries to eliminate code duplication:
+
+- **📋 `lib/quote-functions.js`** - Core business logic functions
+  - Character search, random selection, text formatting
+  - Data validation and statistics
+- **🔧 `lib/mcp-resources.js`** - MCP protocol definitions  
+  - Standard resource and tool registration
+  - Server metadata generation
+- **🌐 `lib/rest-api-helpers.js`** - REST API response handlers
+  - Endpoint logic for all HTTP operations  
+  - Consistent error handling
+- **🧪 `lib/test-helpers.js`** - Testing utilities
+  - Shared test data and validation functions
+  - Common test patterns and assertions
+
+### Benefits
+- **🎯 Single source of truth** - Core logic defined once, used everywhere
+- **🐛 Centralized bug fixes** - Fix once, fixes all implementations  
+- **⚡ Faster development** - New features added across all servers simultaneously
+- **🧪 Easier testing** - Shared utilities reduce test duplication
+- **📏 Consistent behavior** - All implementations use identical logic
+
 ## 🚀 Features
 
 ### MCP Server (stdio transport)
@@ -58,6 +85,13 @@ A comprehensive Model Context Protocol (MCP) server that provides Star Trek quot
 - Case-insensitive character search
 - Partial name matching support
 - Comprehensive error handling
+
+### Development Features
+- **📦 Modular Architecture** - Shared libraries eliminate 400+ lines of duplicate code
+- **🔄 DRY Principle** - Don't Repeat Yourself across all implementations
+- **🧪 Comprehensive Testing** - 84 tests covering all functionality
+- **🛠️ Easy Maintenance** - Single point of change for core functionality
+- **📖 Well Documented** - Clear API documentation and code examples
 
 ## 📋 Prerequisites
 
@@ -793,21 +827,28 @@ curl http://localhost:3000/health
 
 ## 🧪 Testing
 
-The project includes comprehensive test suites with **101 test cases** total across all four server implementations (84 core functionality + 17 integration tests), plus 4 additional tests for future MCP transport enhancements.
+The project includes comprehensive test suites with **84 test cases** total across all four server implementations, designed around the **shared library architecture**. Tests validate both the shared libraries and their integration across different server types.
+
+### Shared Library Benefits for Testing
+- **🔄 Consistent Behavior** - All implementations use identical shared functions
+- **🧪 Reduced Test Duplication** - Core logic tested once in shared libraries  
+- **⚡ Faster Test Runs** - Shared test utilities accelerate test development
+- **🎯 Focused Testing** - Tests validate integration rather than duplicate business logic
+- **🐛 Centralized Validation** - Bug fixes in shared libraries automatically tested everywhere
 
 ### Run Tests
 ```bash
-# Run ALL FOUR server implementations (84 total: 64 core + 20 worker)
+# Run ALL FOUR server implementations (84 total tests)
 npm test
 
-# Run all tests including integration (101 total: 64 core + 20 worker + 17 integration)
+# Run all tests including integration (101 total with integration tests)
 npm run test:all
 
 # Run specific test suites by implementation
 npm run test:core         # First 3 server implementations (64 tests)
-npm run test:mcp          # MCP stdio server only (18 tests)
-npm run test:http         # REST API server only (28 tests)
-npm run test:mcp-http     # MCP HTTP server only (18 tests)
+npm run test:mcp          # MCP stdio server only (20 tests)
+npm run test:http         # REST API server only (17 tests)
+npm run test:mcp-http     # MCP HTTP server only (27 tests)
 npm run test:worker       # Cloudflare Worker unit tests (20 tests)
 npm run test:worker-all   # Worker unit + integration tests (37 tests)
 npm run test:integration  # Worker integration tests only (17 tests)
@@ -893,14 +934,19 @@ npm run test:worker-coverage  # Run worker tests with coverage
 
 ```
 mcp-quotes-server/
+├── lib/                                 # 📦 Shared Libraries (NEW!)
+│   ├── quote-functions.js               #   Core business logic functions
+│   ├── mcp-resources.js                 #   MCP protocol definitions
+│   ├── rest-api-helpers.js              #   REST API response handlers
+│   └── test-helpers.js                  #   Testing utilities
 ├── server.js                           # MCP server (stdio transport)
 ├── mcp-server-http.js                  # MCP server (HTTP transport)  
 ├── http-server.js                      # REST API server implementation
 ├── cloudflare-worker-mcp.js            # Cloudflare Workers MCP server
 ├── quotes.json                         # Star Trek quotes data
-├── server.test.js                      # MCP stdio server tests (18 tests)
-├── http-server.test.js                 # REST API server tests (28 tests)
-├── mcp-server-http.test.js             # MCP HTTP server tests (18 tests)
+├── server.test.js                      # MCP stdio server tests (20 tests)
+├── http-server.test.js                 # REST API server tests (17 tests)
+├── mcp-server-http.test.js             # MCP HTTP server tests (27 tests)
 ├── cloudflare-worker-mcp.test.js       # Worker unit tests (20 tests)
 ├── cloudflare-worker-integration.test.js # Worker integration tests (17 tests)
 ├── wrangler.toml                       # Cloudflare Workers configuration
