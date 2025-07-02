@@ -144,3 +144,6 @@ test-results/
 
 # vi swaps
 *.swp
+
+# Wrangler local development files and cache
+.wrangler/
