@@ -2,8 +2,7 @@
   "mcpServers": {
     "quotes-server": {
       "type": "http",
-      "url": "http://localhost:3001/mcp",
-      "env": {}
+      "url": "https://quotes-mcp-server-v2.klaushofrichter.workers.dev"
     }
   }
 }

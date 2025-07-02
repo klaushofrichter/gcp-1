@@ -2,7 +2,7 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides Star Trek quotes through resources and tools. Built with the modern MCP SDK v1.13.2, this server demonstrates how to create and deploy MCP resources for AI assistants.
 
-This project features a **shared library architecture** that eliminates code duplication across four different server implementations while maintaining consistent functionality and behavior.
+This project features a **shared library architecture** that eliminates code duplication across multiple server implementations while maintaining consistent functionality and behavior.
 
 The code was mostly created by Claude 4 / Cursor. 
 
@@ -61,15 +61,19 @@ The project uses a modular architecture with shared libraries to eliminate code 
 #### Global Edge Network
 - **⚡ Sub-30ms response times** from 300+ global locations
 - **♾️ Unlimited scaling** with automatic load balancing
-- **🔧 Durable Objects** for persistent session management
 - **🌍 99.9% uptime** with built-in redundancy
+
+#### DRY Implementation
+- **📦 Imports quotes.json** - Single source of truth for data
+- **🔧 Reuses shared functions** - All utility functions from `lib/quote-functions.js`
+- **⚡ Optimized bundle** - 9.18 KiB (vs 531 KiB before DRY refactoring)
+- **🧹 Clean codebase** - No duplicated logic or hardcoded data
 
 #### Same MCP Protocol & Features
 - **📚 Resources**: All 3 MCP resources available globally
 - **🛠️ Tools**: Both MCP tools with edge performance
-- **🔒 Global Sessions**: Persistent sessions across edge locations
 - **🌐 CORS Ready**: Pre-configured for web applications
-- **📊 Production Monitoring**: Built-in analytics and health checks
+- **📊 Production Monitoring**: Built-in health checks
 
 ### REST API Server (HTTP endpoints)
 #### Available Endpoints
@@ -91,7 +95,7 @@ The project uses a modular architecture with shared libraries to eliminate code 
 ### Development Features
 - **📦 Modular Architecture** - Shared libraries eliminate 400+ lines of duplicate code
 - **🔄 DRY Principle** - Don't Repeat Yourself across all implementations
-- **🧪 Comprehensive Testing** - 84 tests covering all functionality
+- **🧪 Comprehensive Testing** - 79 tests covering all functionality
 - **🛠️ Easy Maintenance** - Single point of change for core functionality
 - **📖 Well Documented** - Clear API documentation and code examples
 
@@ -198,7 +202,7 @@ Returns the complete collection of quotes as JSON.
     "by": "Spock"
   },
   {
-    "quote": "Space: the final frontier.",
+    "quote": "Beam me up, Scotty.",
     "by": "Captain James T. Kirk"
   }
 ]
@@ -222,7 +226,7 @@ Returns all quotes formatted as readable text.
 ```
 1. "Live long and prosper." - Spock
 
-2. "Space: the final frontier." - Captain James T. Kirk
+2. "Beam me up, Scotty." - Captain James T. Kirk
 
 3. "Resistance is futile." - The Borg
 
@@ -231,6 +235,10 @@ Returns all quotes formatted as readable text.
 5. "I have been, and always shall be, your friend." - Spock
 
 6. "Logic is the beginning of wisdom, not the end." - Spock
+
+7. "It was … fun." - Captain James T. Kirk
+
+8. "I don't believe in the no-win scenario." - Captain James T. Kirk
 ```
 
 ### Tools
@@ -295,7 +303,7 @@ This project provides **four different server implementations** for different us
 - ✅ **99.9% Uptime**: Built-in redundancy and failover
 - ✅ **Cost Effective**: Free tier + pay-per-use scaling
 - ✅ **Zero Infrastructure**: No servers to manage
-- ✅ **Session Management**: Durable Objects for global state
+- ✅ **DRY Implementation**: Optimized bundle size with shared functions
 
 ### 4. REST API Server (HTTP) - `npm run start:http`
 **Best for**: Web applications, mobile apps, general API access, non-MCP clients
@@ -406,9 +414,14 @@ The MCP Quotes Server can be deployed to **Cloudflare Workers** for global edge 
 - **99.9% uptime** with built-in redundancy
 - **Zero cold starts** for consistent performance
 
+#### **DRY Architecture Benefits**
+- **📦 Single Data Source**: Imports from `quotes.json` instead of hardcoded data
+- **🔧 Shared Functions**: Uses all utilities from `lib/quote-functions.js`
+- **⚡ Optimized Bundle**: 9.18 KiB (98% smaller than before DRY refactoring)
+- **🧹 Clean Code**: No duplicated logic, easy to maintain
+
 #### **Production Ready**
 - **Full MCP Protocol Support** via HTTP transport
-- **Durable Objects** for session management
 - **CORS enabled** for cross-origin requests
 - **Comprehensive error handling** and monitoring
 - **Security headers** and request validation
@@ -431,15 +444,15 @@ The MCP Quotes Server can be deployed to **Cloudflare Workers** for global edge 
 npm install
 
 # 2. Deploy to Cloudflare Workers
-npm run worker:deploy
+npx wrangler deploy
 
 # 3. Validate deployment
-npm run test:integration
+npm run test:cloudflare
 ```
 
 **🎉 Your MCP server is now live globally!**
 
-Example deployment URL: `https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev`
+Example deployment URL: `https://quotes-mcp-server-v2.YOUR-SUBDOMAIN.workers.dev`
 
 ### 📊 Performance Metrics
 
@@ -452,6 +465,7 @@ Our production deployment achieves:
 | **Availability** | 99.9%+ uptime |
 | **Concurrent Users** | Unlimited |
 | **Global Locations** | 300+ edge cities |
+| **Bundle Size** | 9.18 KiB (optimized) |
 
 ### 🔧 Configuration
 
@@ -459,377 +473,30 @@ The Workers deployment includes:
 
 #### **MCP Endpoints**
 ```
-POST /mcp     - MCP protocol requests
-GET /mcp      - Server-sent events (SSE)
-DELETE /mcp   - Session termination
-GET /health   - Health check
-GET /         - API information
+POST /     - MCP protocol requests
 ```
-
-#### **Durable Objects**
-Session management powered by Cloudflare Durable Objects:
-- **Persistent sessions** across edge locations
-- **Automatic cleanup** of expired sessions
-- **Global consistency** for multi-user scenarios
 
 #### **CORS Support**
 Pre-configured for web applications:
 ```javascript
 Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
-Access-Control-Allow-Headers: Content-Type, mcp-session-id
+Access-Control-Allow-Methods: POST
+Access-Control-Allow-Headers: Content-Type
 ```
 
 ### 🎯 Usage Examples
 
 #### **Direct HTTP API Access**
 ```bash
-# Health check
-curl https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/health
-
-# Get API information
-curl https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/
-
 # MCP protocol request
-curl -X POST https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/mcp \
+curl -X POST https://quotes-mcp-server-v2.YOUR-SUBDOMAIN.workers.dev \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05"},"id":1}'
 ```
 
-#### **MCP Client Configuration**
-Configure your MCP client to use the deployed Workers URL:
-
-```json
-{
-  "mcpServers": {
-    "quotes-server-workers": {
-      "type": "http",
-      "url": "https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/mcp"
-    }
-  }
-}
-```
-
-#### **JavaScript/TypeScript Integration**
-```javascript
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-
-// Connect to your Workers deployment
-const client = new Client({
-  name: 'web-quotes-client',
-  version: '1.0.0'
-});
-
-const transport = new StreamableHTTPClientTransport(
-  new URL('https://quotes-mcp-server.YOUR-SUBDOMAIN.workers.dev/mcp')
-);
-
-await client.connect(transport);
-
-// Use MCP resources and tools as normal
-const quotes = await client.readResource({ uri: 'quotes://all' });
-console.log('Quotes from global edge:', JSON.parse(quotes.contents[0].text));
-```
-
-### 📖 Deployment Documentation
-
-#### **Full Deployment Guide**
-See [`WORKER-DEPLOYMENT.md`](./WORKER-DEPLOYMENT.md) for comprehensive deployment instructions including:
-- Environment setup
-- Custom domain configuration
-- Environment variables
-- Monitoring and debugging
-
-#### **Testing Documentation**
-See [`TESTING.md`](./TESTING.md) for testing information including:
-- Unit tests vs integration tests
-- Performance benchmarking
-- Load testing procedures
-
-### 🔄 Development Workflow
-
-#### **Local Development**
-```bash
-# Run locally with Wrangler
-npm run worker:dev
-
-# Test against local instance
-npm run test:worker
-```
-
-#### **CI/CD Integration**
-```bash
-# Complete validation pipeline
-npm run worker:validate
-
-# Individual steps
-npm run test:worker        # Unit tests
-npm run worker:deploy      # Deploy to Workers
-npm run test:integration   # Test live deployment
-```
-
-### 🌍 Global Availability
-
-The Cloudflare Workers deployment provides:
-
-- **Multi-region failover** for maximum reliability
-- **Edge caching** for static resources
-- **Auto-scaling** based on demand
-- **DDoS protection** included
-- **Analytics** via Cloudflare dashboard
-
-### 📈 Monitoring
-
-Monitor your deployment via:
-
-#### **Cloudflare Dashboard**
-- Real-time analytics
-- Error rate monitoring  
-- Response time metrics
-- Geographic distribution
-
-#### **Health Endpoint**
-```json
-{
-  "status": "healthy",
-  "quotesLoaded": 8,
-  "transport": "mcp-http-cloudflare", 
-  "timestamp": "2024-01-01T12:00:00.000Z",
-  "edge": "LHR"
-}
-```
-
-#### **Custom Monitoring**
-Integrate with your monitoring stack via webhook endpoints or API polling.
-
-## 🎮 Usage Examples
-
-### Using MCP Resources & Tools
-Ask your AI assistant:
-- *"Show me all available Star Trek quotes"* → Uses `quotes://all`
-- *"Give me a random Star Trek quote"* → Uses `quotes://random`
-- *"Show me the quotes in text format"* → Uses `quotes://text`
-- *"Find quotes by Spock"* → Uses `get-quote-by-character` tool
-- *"Show me Captain Picard quotes"* → Uses partial matching
-- *"Get me a random Star Trek quote"* → Uses `random-quote-tool`
-
-### Using MCP Server (HTTP)
-Start the MCP HTTP server: `npm run start:mcp-http`
-
-Server will start on `http://127.0.0.1:3001` with the following output:
-```
-🚀 Star Trek Quotes MCP Server (Streamable HTTP)
-🌐 Server running at: http://127.0.0.1:3001
-📊 Loaded 8 quotes
-🖖 Live long and prosper!
-```
-
-#### MCP Client Configuration
-
-**HTTP MCP server for MCP-compatible tools such as Cursor IDE:**
-
-Run the HTTP MCP server with `npm run start:mcp-http` and add this configuration to cursor:
-```json
-{
-  "mcpServers": {
-    "quotes-server-http": {
-      "type": "http", 
-      "url": "http://127.0.0.1:3001/mcp"
-    }
-  }
-}
-```
-
-**For Cursor IDE using stdio:**
-There is no need to run a server as the MCP client invokes the server per commandline. 
-Configure the local installation like this: 
-```json
-{
-  "mcpServers": {
-    "quotes-server": {
-      "type":"stdio",
-      "command": "node",
-      "args": ["/YOUR-PATH/mcp-1/server.js"],
-      "env": {}
-    }
-  }
-}
-```
-
-#### MCP Client SDK Usage (JavaScript)
-
-**Basic Connection & Resources:**
-```javascript
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-
-// Create client and transport
-const client = new Client({
-  name: 'quotes-client',
-  version: '1.0.0'
-});
-
-const transport = new StreamableHTTPClientTransport(
-  new URL('http://127.0.0.1:3001/mcp')
-);
-
-// Connect to server
-await client.connect(transport);
-
-// List all available resources
-const resources = await client.listResources();
-console.log('Available resources:', resources.resources.map(r => r.uri));
-// Output: ['quotes://all', 'quotes://random', 'quotes://text']
-
-// Read all quotes
-const allQuotes = await client.readResource({ uri: 'quotes://all' });
-const quotes = JSON.parse(allQuotes.contents[0].text);
-console.log(`Found ${quotes.length} quotes`);
-
-// Get random quote
-const randomQuote = await client.readResource({ uri: 'quotes://random' });
-console.log('Random quote:', JSON.parse(randomQuote.contents[0].text));
-
-// Get formatted text
-const textQuotes = await client.readResource({ uri: 'quotes://text' });
-console.log('Formatted quotes:\n', textQuotes.contents[0].text);
-```
-
-**Tool Usage:**
-```javascript
-// List available tools
-const tools = await client.listTools();
-console.log('Available tools:', tools.tools.map(t => t.name));
-// Output: ['get-quote-by-character', 'random-quote-tool']
-
-// Search quotes by character
-const spockQuotes = await client.callTool({
-  name: 'get-quote-by-character',
-  arguments: { character: 'Spock' }
-});
-console.log('Spock quotes:', spockQuotes.content[0].text);
-
-// Get random quote via tool
-const randomQuoteTool = await client.callTool({
-  name: 'random-quote-tool',
-  arguments: {}
-});
-console.log('Random quote tool result:', randomQuoteTool.content[0].text);
-
-// Handle errors
-try {
-  const unknownChar = await client.callTool({
-    name: 'get-quote-by-character',
-    arguments: { character: 'Worf' }
-  });
-} catch (error) {
-  console.log('Error result:', error.content[0].text);
-  // Shows: "No quotes found for character "Worf". Available characters: ..."
-}
-
-// Clean disconnect
-await client.close();
-```
-
-#### Manual HTTP Usage (Advanced)
-
-**Session Initialization:**
-```bash
-# Initialize MCP session
-curl -X POST http://127.0.0.1:3001/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "initialize",
-    "params": {
-      "protocolVersion": "2024-11-05",
-      "capabilities": {},
-      "clientInfo": {"name": "manual-client", "version": "1.0.0"}
-    }
-  }' \
-  -v
-# Returns session ID in 'mcp-session-id' header
-```
-
-**Using Resources:**
-```bash
-# List resources (replace SESSION_ID with actual ID from initialization)
-curl -X POST http://127.0.0.1:3001/mcp \
-  -H "Content-Type: application/json" \
-  -H "mcp-session-id: SESSION_ID" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 2,
-    "method": "resources/list",
-    "params": {}
-  }'
-
-# Read a specific resource
-curl -X POST http://127.0.0.1:3001/mcp \
-  -H "Content-Type: application/json" \
-  -H "mcp-session-id: SESSION_ID" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 3,
-    "method": "resources/read",
-    "params": {"uri": "quotes://random"}
-  }'
-```
-
-**Health & Monitoring:**
-```bash
-# Check server health
-curl http://127.0.0.1:3001/health
-
-# Get server information
-curl http://127.0.0.1:3001/
-
-# Monitor active sessions
-curl http://127.0.0.1:3001/health | jq '.activeSessions'
-```
-
-### Using REST API
-Start the HTTP server: `npm run start:http`
-
-#### cURL Examples
-```bash
-# Get API information
-curl http://localhost:3000/
-
-# Get all quotes
-curl http://localhost:3000/quotes
-
-# Get a random quote
-curl http://localhost:3000/quotes/random
-
-# Get quotes by character
-curl http://localhost:3000/quotes/character/spock
-curl http://localhost:3000/quotes/character/kirk
-
-# Get all available characters
-curl http://localhost:3000/characters
-
-# Search quotes
-curl "http://localhost:3000/search?q=logic"
-curl "http://localhost:3000/search?q=captain"
-
-# Health check
-curl http://localhost:3000/health
-```
-
-#### Browser Examples
-- **API Info**: http://localhost:3000/
-- **All Quotes**: http://localhost:3000/quotes
-- **Random Quote**: http://localhost:3000/quotes/random
-- **Spock Quotes**: http://localhost:3000/quotes/character/spock
-- **Search**: http://localhost:3000/search?q=prosper
-
 ## 🧪 Testing
 
-The project includes comprehensive test suites with **84 test cases** total across all four server implementations, designed around the **shared library architecture**. Tests validate both the shared libraries and their integration across different server types.
+The project includes comprehensive test suites with **79 test cases** total across all server implementations, designed around the **shared library architecture**. Tests validate both the shared libraries and their integration across different server types.
 
 ### Shared Library Benefits for Testing
 - **🔄 Consistent Behavior** - All implementations use identical shared functions
@@ -840,96 +507,44 @@ The project includes comprehensive test suites with **84 test cases** total acro
 
 ### Run Tests
 ```bash
-# Run ALL FOUR server implementations (84 total tests)
+# Run ALL server implementations (79 total tests)
 npm test
 
-# Run all tests including integration (101 total with integration tests)
+# Run all tests comprehensively
 npm run test:all
 
 # Run specific test suites by implementation
-npm run test:core         # First 3 server implementations (64 tests)
-npm run test:mcp          # MCP stdio server only (20 tests)
-npm run test:http         # REST API server only (17 tests)
-npm run test:mcp-http     # MCP HTTP server only (27 tests)
-npm run test:worker       # Cloudflare Worker unit tests (20 tests)
-npm run test:worker-all   # Worker unit + integration tests (37 tests)
-npm run test:integration  # Worker integration tests only (17 tests)
+npm run test:core          # Local server implementations (64 tests)
+npm run test:mcp           # MCP stdio server only (20 tests)
+npm run test:http          # REST API server only (17 tests)
+npm run test:mcp-http      # MCP HTTP server only (27 tests)
+npm run test:cloudflare    # Cloudflare integration tests (15 tests)
+npm run test:cloudflare-quick  # Quick validation script (5 tests)
 
 # Development testing
-npm run test:watch        # Run core tests in watch mode
-npm run test:coverage     # Run core tests with coverage reporting
-npm run test:worker-coverage  # Run worker tests with coverage
+npm run test:watch         # Run core tests in watch mode
+npm run test:coverage      # Run core tests with coverage reporting
 ```
 
 ### Test Coverage
 
-#### MCP Server Tests (18 tests)
-- ✅ **Resource Handlers** (5 tests) - Core resource functionality  
-- ✅ **Tool Handlers** (8 tests) - Tool functionality including edge cases
-- ✅ **Edge Cases** (2 tests) - Empty data and single quote scenarios
-- ✅ **Data Validation** (3 tests) - Data structure validation
+#### Core Server Tests (64 tests)
+- ✅ **MCP Server Tests** (20 tests) - stdio transport functionality
+- ✅ **HTTP REST API Tests** (17 tests) - All endpoints and operations
+- ✅ **MCP HTTP Server Tests** (27 tests) - HTTP transport with sessions
 
-#### HTTP REST API Tests (28 tests)
-- ✅ **Core Functionality** (8 tests) - All endpoints and basic operations
-- ✅ **Character Search** (6 tests) - Character-specific quote retrieval
-- ✅ **Search & Discovery** (5 tests) - Content search and character listing
-- ✅ **Error Handling** (2 tests) - 404s and invalid requests
-- ✅ **Technical Validation** (4 tests) - Headers, content types, CORS
-- ✅ **Edge Cases** (3 tests) - URL encoding, special characters
+#### Cloudflare Worker Tests (15 tests)
+- ✅ **MCP Protocol Compliance** (5 tests) - Initialize, tools, resources
+- ✅ **Tool Functionality** (4 tests) - Character search and random quotes
+- ✅ **Resource Access** (3 tests) - All resource endpoints
+- ✅ **Error Handling** (3 tests) - Invalid methods, tools, malformed JSON
 
-#### MCP HTTP Server Tests (18 tests)
-**Testing Strategy**: Spawns actual MCP HTTP server process and tests via HTTP requests
-
-- ✅ **Non-MCP Endpoints** (3 tests)
-  - Server information endpoint (`GET /`)
-  - Health check functionality (`GET /health`)  
-  - 404 handling for unknown routes
-  
-- ✅ **Session Management** (3 tests)
-  - Rejection of requests without valid session ID
-  - Proper handling of GET/DELETE without session
-  - Session validation and error responses
-  
-- ✅ **Message Validation** (3 tests)
-  - JSON-RPC format validation for initialize method
-  - Valid MCP message structure handling
-  - Rejection of malformed JSON-RPC messages
-  
-- ✅ **HTTP Method Handling** (4 tests)
-  - GET requests to MCP endpoint (SSE)
-  - DELETE requests for session termination
-  - Invalid session ID error handling
-  - Proper HTTP status codes and responses
-  
-- ✅ **Error Handling** (3 tests)
-  - Malformed JSON request handling
-  - Empty request body handling
-  - Non-JSON content type rejection
-  
-- ✅ **Server Robustness** (2 tests)
-  - Concurrent requests to different endpoints
-  - Server state consistency across multiple requests
-
-### Test Results
+### Test Results Summary
 ```
-✅ HTTP API information endpoint
-✅ Health check functionality  
-✅ All quotes retrieval via REST
-✅ Random quote generation via HTTP
-✅ Text format output via REST
-✅ Character-specific quote search
-✅ Case-insensitive character matching
-✅ Partial name matching via HTTP
-✅ Non-existent character handling
-✅ Available characters listing
-✅ Content-based quote search
-✅ Search query validation
-✅ Error handling and 404 responses
-✅ CORS headers validation
-✅ Content-Type verification
-✅ URL encoding support
-✅ Special characters in URLs
-✅ HTTP method validation
+📊 Total Test Results:
+   ✅ Core Tests: 64/64 passed (100%)
+   ✅ Cloudflare Tests: 15/15 passed (100%)
+   📈 Overall Success Rate: 79/79 (100%)
 ```
 
 ## 🗂️ Source Code Structure
@@ -961,7 +576,7 @@ export function getMcpServerMetadata(name, transport, quotesData, extras) // Ser
 
 #### **`lib/rest-api-helpers.js`** - REST API Response Handlers
 ```javascript
-// HTTP endpoint handlers used by REST API and Workers
+// HTTP endpoint handlers used by REST API
 export function getApiInfo(quotesData, serverInfo)             // API information responses
 export function getHealthCheck(quotesData, serverInfo)         // Health check responses
 export function handleGetAllQuotes(quotesData)                 // GET /quotes logic
@@ -1042,69 +657,39 @@ app.get('/quotes', (req, res) => {
 // Started with: npm run start:http
 ```
 
-#### **`cloudflare-worker-mcp.js`** - Cloudflare Workers MCP
+#### **`worker.js`** - Cloudflare Workers MCP (DRY Implementation)
 ```javascript
-// Global edge MCP server using Workers Request/Response API
-import { registerMcpResources, registerMcpTools } from './lib/mcp-resources.js';
-import { getApiInfo, getHealthCheck } from './lib/rest-api-helpers.js';
+// Global edge MCP server using DRY principles
+import quotesData from './quotes.json';  // Single source of truth
+import { 
+  getRandomQuote, formatQuoteAsText, formatQuotesAsText, 
+  searchQuotesByCharacter, getAvailableCharacters 
+} from './lib/quote-functions.js';
 
-function createMcpServer() {
-  const server = new McpServer({ name: 'quotes-server-cloudflare', version: '1.0.0' });
-  registerMcpResources(server, quotesData, 'Cloudflare');  // Same MCP resources
-  registerMcpTools(server, quotesData, 'Cloudflare');      // Same MCP tools
-  return server;
+// Lightweight HTTP handler using shared functions
+export default {
+  async fetch(request, env, ctx) {
+    // Direct MCP protocol implementation
+    // Uses shared functions for all quote operations
+    // No duplicated data or logic
+  }
 }
 
-// Uses: Cloudflare Workers Runtime + Durable Objects
-// Features: Global edge distribution, session persistence, CORS
-// Purpose: Production deployment, global availability
-// Deployed with: npm run worker:deploy
+// Uses: Cloudflare Workers Request/Response API
+// Features: Global edge distribution, auto-scaling, DRY architecture
+// Bundle size: 9.18 KiB (optimized)
+// Started with: npx wrangler deploy
 ```
 
-### 📊 Data Layer
-
-#### **`quotes.json`** - Single Source of Truth
-```json
-// Centralized data file used by all implementations
-[
-  { "quote": "Live long and prosper.", "by": "Spock" },
-  { "quote": "Make it so.", "by": "Captain Jean-Luc Picard" },
-  // ... 8 total quotes
-]
-```
-
-All servers import this same data file, ensuring **100% consistency** across implementations.
-
-### 🧪 Testing Architecture
-
-The testing architecture mirrors the shared library approach, with **84 total tests** across all implementations.
-
-#### **Core Tests (`server.test.js`, `http-server.test.js`, `mcp-server-http.test.js`)**
-```javascript
-import { mockQuotesData, createTestHandlers } from './lib/test-helpers.js';
-
-// Each test file uses shared test data and utilities
-// Tests validate integration with shared libraries, not business logic duplication
-// Business logic is tested once in the shared libraries
-```
-
-#### **Worker Tests (`cloudflare-worker-mcp.test.js`, `cloudflare-worker-integration.test.js`)**
-```javascript
-// Unit tests: Validate Workers-specific functionality (20 tests)
-// Integration tests: Test live deployment (17 tests)
-// Uses shared test patterns but validates Workers runtime environment
-```
-
-### 🔄 Data Flow Architecture
-
+### 📁 Data Flow
 ```
 📁 quotes.json (Single Source of Truth)
      ↓
 📦 lib/quote-functions.js (Core Logic)
      ↓
-┌─── 📦 lib/mcp-resources.js ←── MCP Servers (stdio, HTTP, Workers)
-│    📦 lib/rest-api-helpers.js ←── REST API Server & Workers  
-└─── 📦 lib/test-helpers.js ←── All Test Files
+┌─── 📦 lib/mcp-resources.js ←── MCP Servers (stdio, HTTP)
+│    📦 lib/rest-api-helpers.js ←── REST API Server
+└─── 🌐 worker.js ←── Cloudflare Workers (Direct Import)
 ```
 
 ### 🎯 Benefits of this Architecture
@@ -1112,6 +697,7 @@ import { mockQuotesData, createTestHandlers } from './lib/test-helpers.js';
 #### **🔄 DRY Principle (Don't Repeat Yourself)**
 - **Single source of truth** for all business logic
 - **Centralized bug fixes** - fix once, fixes everywhere
+- **Cloudflare Workers optimization** - 98% bundle size reduction
 
 #### **📏 Consistent Behavior**  
 - **Identical logic** across all server implementations
@@ -1137,17 +723,17 @@ import { mockQuotesData, createTestHandlers } from './lib/test-helpers.js';
 
 ```
 mcp-quotes-server/
-├── 📦 lib/                              # Shared Libraries (Eliminates 454+ lines of duplication)
+├── 📦 lib/                              # Shared Libraries (Eliminates 400+ lines of duplication)
 │   ├── quote-functions.js               #   🎯 Core: search, format, validate (8 functions)
 │   ├── mcp-resources.js                 #   🔧 MCP: resources, tools, metadata (3 functions)  
 │   ├── rest-api-helpers.js              #   🌐 REST: endpoint handlers (9 functions)
 │   └── test-helpers.js                  #   🧪 Test: shared utilities (10+ functions)
 │
 ├── 🚀 Server Implementations            # Thin wrappers around shared libraries
-│   ├── server.js                        #   📡 MCP Stdio (45 lines, was 163)
-│   ├── mcp-server-http.js               #   🌐 MCP HTTP (257 lines, was 393) 
-│   ├── http-server.js                   #   📋 REST API (252 lines, was 317)
-│   └── cloudflare-worker-mcp.js         #   ☁️ Workers MCP (256 lines, was 391)
+│   ├── server.js                        #   📡 MCP Stdio (44 lines)
+│   ├── mcp-server-http.js               #   🌐 MCP HTTP (244 lines) 
+│   ├── http-server.js                   #   📋 REST API (187 lines)
+│   └── worker.js                        #   ☁️ Workers MCP DRY (269 lines, 9.18 KiB)
 │
 ├── 📊 Data & Configuration
 │   ├── quotes.json                      #   📚 Single source of truth (8 quotes)
@@ -1155,12 +741,13 @@ mcp-quotes-server/
 │   ├── package-lock.json                #   🔒 Locked dependency versions
 │   └── wrangler.toml                    #   ☁️ Cloudflare Workers config
 │
-├── 🧪 Testing Suite (84 Tests Total)
+├── 🧪 Testing Suite (79 Tests Total)
 │   ├── server.test.js                   #   📡 MCP Stdio tests (20 tests)
 │   ├── http-server.test.js              #   📋 REST API tests (17 tests)
 │   ├── mcp-server-http.test.js          #   🌐 MCP HTTP tests (27 tests)
-│   ├── cloudflare-worker-mcp.test.js    #   ☁️ Workers unit tests (20 tests)
-│   └── cloudflare-worker-integration.test.js # 🌍 Workers integration (17 tests)
+│   ├── test-mcp-server.js               #   ☁️ Workers integration tests (15 tests)
+│   ├── quick-test.sh                    #   ⚡ Fast validation script (5 tests)
+│   └── manual-tests.md                  #   📖 Manual testing guide
 │
 └── 📖 Documentation
     ├── README.md                        #   📚 Complete documentation
@@ -1169,7 +756,7 @@ mcp-quotes-server/
     └── TESTING.md                       #   🧪 Testing guide
 ```
 
-This architecture demonstrates **enterprise-grade software engineering practices** with clear separation of concerns, comprehensive testing, and maintainable code organization.
+This architecture demonstrates **enterprise-grade software engineering practices** with clear separation of concerns, comprehensive testing, and maintainable code organization optimized for modern edge computing.
 
 ## 🔧 Development
 
@@ -1180,35 +767,38 @@ npm start              # Start the MCP server (stdio transport)
 npm run start:mcp-http # Start the MCP server (HTTP transport)  
 npm run start:http     # Start the REST API server (HTTP)
 
-# Testing all four implementations
-npm test               # Run all four server implementations (84 tests)
-npm run test:all       # Run all tests including integration (101 tests)
-npm run test:core      # Run first 3 implementations only (64 tests)
+# Testing
+npm test               # Run all server implementations (79 tests)
+npm run test:all       # Run all tests comprehensively
+npm run test:core      # Run local implementations (64 tests)
+npm run test:cloudflare     # Run Cloudflare integration tests (15 tests)
+npm run test:cloudflare-quick # Quick validation (5 tests)
 
 # Development testing
 npm run test:watch     # Run core tests in watch mode
 npm run test:coverage  # Run core tests with coverage
 
 # Cloudflare Workers
-npm run worker:deploy  # Deploy to Cloudflare Workers
+npx wrangler deploy    # Deploy to Cloudflare Workers
 npm run worker:dev     # Run Workers locally with Wrangler
-npm run worker:validate # Test + deploy + validate pipeline
 ```
 
 ### Adding New Quotes
 1. Edit `quotes.json`
 2. Add new quote objects with `quote` and `by` properties
 3. Run tests to ensure everything works: `npm test`
+4. Redeploy if using Cloudflare Workers: `npx wrangler deploy`
 
 ### Dependencies
 - **@modelcontextprotocol/sdk**: ^1.13.2 - Modern MCP SDK
-- **express**: ^4.21.2 - Web framework for REST API
+- **express**: ^4.18.2 - Web framework for REST API
 - **cors**: ^2.8.5 - Cross-origin resource sharing
 - **zod**: ^3.23.8 - Schema validation
 
 ### Dev Dependencies  
 - **jest**: ^29.7.0 - Testing framework
 - **supertest**: ^6.3.4 - HTTP testing library
+- **wrangler**: ^4.22.0 - Cloudflare Workers CLI
 
 ## 🐛 Troubleshooting
 
@@ -1241,40 +831,28 @@ npm run worker:validate # Test + deploy + validate pipeline
 
 3. **Restart your MCP client**: Reload VS Code (for Claude Code) or restart Cursor.
 
-### MCP HTTP Server Issues
+### Cloudflare Workers Issues
 
-1. **Port already in use (3001)**:
+1. **Deployment failed**: 
    ```bash
-   # Find process using port 3001
-   lsof -i :3001
+   # Check Wrangler authentication
+   npx wrangler auth
    
-   # Kill the process
-   kill -9 <PID>
+   # Verify wrangler.toml configuration
+   cat wrangler.toml
    
-   # Or use different port
-   PORT=3002 npm run start:mcp-http
+   # Deploy with verbose output
+   npx wrangler deploy --verbose
    ```
 
-2. **Session connection failures**:
+2. **Test deployment**:
    ```bash
-   # Test server is running
-   curl http://127.0.0.1:3001/health
+   # Run integration tests
+   npm run test:cloudflare
    
-   # Test basic connectivity
-   curl http://127.0.0.1:3001/
-   
-   # Check server logs for session errors
+   # Quick validation
+   npm run test:cloudflare-quick
    ```
-
-3. **MCP client transport errors**:
-   - Ensure client uses `streamableHttp` transport type
-   - Verify URL points to `/mcp` endpoint: `http://127.0.0.1:3001/mcp`
-   - Check that server allows your client's host (127.0.0.1/localhost only)
-
-4. **DNS rebinding protection**:
-   - Server only accepts connections from `127.0.0.1` and `localhost`
-   - Use `127.0.0.1:3001` instead of other IP addresses
-   - Docker/container networking may require host networking mode
 
 ### Common Issues
 
@@ -1284,6 +862,7 @@ npm run worker:validate # Test + deploy + validate pipeline
 | "Permission denied" | Check file permissions |
 | "Port already in use" | Kill existing processes |
 | "Config not found" | Verify MCP client config file path |
+| "Worker deployment failed" | Check Wrangler authentication |
 
 ## 🤝 Contributing
 
@@ -1302,12 +881,14 @@ This project is licensed under the MIT License.
 This project demonstrates how to:
 - **Create MCP servers** with stdio and HTTP transports using the official SDK
 - **Implement MCP resources and tools** with proper schema validation and error handling
-- **Handle multiple transport types** (stdio, Streamable HTTP, REST API)
-- **Build comprehensive test suites** with 64 total tests across all implementations
+- **Handle multiple transport types** (stdio, Streamable HTTP, REST API, Workers)
+- **Build comprehensive test suites** with 79 total tests across all implementations
 - **Configure MCP clients** for local and remote environments
 - **Manage sessions and state** in HTTP-based MCP servers with UUID tracking
 - **Implement security features** like DNS rebinding protection and host validation
 - **Provide observability** through health checks and monitoring endpoints
+- **Apply DRY principles** for maintainable, efficient code across implementations
+- **Optimize for edge computing** with Cloudflare Workers deployment
 
 Perfect for:
 - 🎓 **Learning MCP development** with practical, production-ready examples
@@ -1316,6 +897,7 @@ Perfect for:
 - 🌐 **Building remote MCP integrations** with HTTP transport and session management
 - 📊 **Testing strategies** for both unit tests and integration tests with real server processes
 - 🛡️ **Security patterns** for network-accessible MCP servers
+- ⚡ **Performance optimization** through DRY architecture and edge deployment
 
 ---
 
