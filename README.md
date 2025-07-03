@@ -288,6 +288,52 @@ needed for this implementation, but the remote Cloudflare server requires API ke
      availability with the command `/mcp'. Use the server by asking for example:
      `give me a quote by picard`. 
 
+### 🌟 Gemini CLI
+
+1. **Install Gemini CLI**
+   - Install "gemini-cli" by following the [instructions](https://github.com/google/gemini-cli). 
+
+2. **Configure MCP Server**
+   - Create a MCP server configuration in a `.gemini/settings.json` file:
+
+    ```json
+    {
+      "mcpServers": {
+        "quotes-server-stdio": {
+          "type": "stdio",
+          "command": "node",
+          "args": ["/YOUR-PATH/mcp-1/server.js"],
+          "env": {}
+        },
+        "quotes-server-http": {
+          "type": "http",
+          "command": "node",
+          "args": ["/YOUR-PATH/mcp-1/mcp-server-http.js"],
+          "env": {
+            "PORT": "3001"
+          }
+        },
+        "quotes-server-http-proxy": {
+          "type": "http",
+          "url": "http://localhost:3001",
+          "description": "Local HTTP proxy for a remote MCP server"
+        },
+        "quotes-server-cloudflare": {
+          "type": "http",
+          "url": "https://quotes-mcp-worker.klaushofrichter.workers.dev",
+          "description": "Cloudflare Workers deployment with global edge distribution"
+        }
+      }
+    }
+    ```
+
+  **Important**: Update the `args` paths to match your actual installation directory.
+
+3. **Run Gemini CLI**
+   - Launch gemini with the command line `gemini`. You can check the MCP server
+     availability with the command `/mcp`. Use the server by asking for example:
+     `give me a quote by picard`. 
+
 
 ## 📖 API Documentation
 
@@ -509,7 +555,7 @@ curl -X POST "http://localhost:3001" \
 
 ```
 Local Client → Proxy Server → Remote MCP Server
-     ↑              ↓                 ↓
+     ↑               ↓                ↓
      └─── Response ←─┴── + API Key ←──┘
 ```
 
