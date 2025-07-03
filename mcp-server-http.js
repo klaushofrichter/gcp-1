@@ -24,12 +24,12 @@ const VALID_API_KEYS = [
 
 // Check if running from GitHub Pages
 function isGitHubPages() {
-  // Check for GitHub Pages specific environment variables or conditions
+  // Only enable API key validation for actual GitHub Pages deployments
+  // Not for CI/testing environments
   return !!(
     process.env.GITHUB_PAGES ||
-    process.env.GITHUB_ACTIONS ||
-    process.env.CI ||
     (process.env.NODE_ENV === 'production' && 
+     process.env.GITHUB_ACTIONS && 
      (process.env.HOST?.includes('github.io') || 
       process.env.HOSTNAME?.includes('github.io') ||
       process.env.URL?.includes('github.io')))

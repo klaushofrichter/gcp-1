@@ -26,6 +26,7 @@ jobs:
         run: npm run test:core
         env:
           QUOTES_MCP_API_KEY: ${{ secrets.QUOTES_MCP_API_KEY }}
+          REMOTE_MCP_URL: ${{ secrets.REMOTE_MCP_URL }}
       
       - name: Test GitHub Pages functionality
         run: npm run test:github-pages
@@ -34,6 +35,7 @@ jobs:
         run: npm run test:cloudflare
         env:
           QUOTES_MCP_API_KEY: ${{ secrets.QUOTES_MCP_API_KEY }}
+          REMOTE_MCP_URL: ${{ secrets.REMOTE_MCP_URL }}
         continue-on-error: true  # Don't fail PR if Cloudflare tests fail (API key might not be available)
       
       - name: Upload test results
