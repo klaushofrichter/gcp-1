@@ -24,6 +24,8 @@ jobs:
       
       - name: Run core tests
         run: npm run test:core
+        env:
+          QUOTES_MCP_API_KEY: ${{ secrets.QUOTES_MCP_API_KEY }}
       
       - name: Test GitHub Pages functionality
         run: npm run test:github-pages
