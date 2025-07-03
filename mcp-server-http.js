@@ -14,6 +14,68 @@ import { registerMcpResources, registerMcpTools, getMcpServerMetadata } from './
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// API Keys for GitHub Pages deployment (same as Cloudflare for consistency)
+const VALID_API_KEYS = [
+  'quotes-key-2024-live-long-prosper',
+  'quotes-key-2024-make-it-so', 
+  'quotes-key-2024-resistance-futile',
+  'quotes-key-2024-beam-me-up'
+];
+
+// Check if running from GitHub Pages
+function isGitHubPages() {
+  // Check for GitHub Pages specific environment variables or conditions
+  return !!(
+    process.env.GITHUB_PAGES ||
+    process.env.GITHUB_ACTIONS ||
+    process.env.CI ||
+    (process.env.NODE_ENV === 'production' && 
+     (process.env.HOST?.includes('github.io') || 
+      process.env.HOSTNAME?.includes('github.io') ||
+      process.env.URL?.includes('github.io')))
+  );
+}
+
+// Validate API Key (only enforced on GitHub Pages)
+function validateApiKey(req) {
+  // Skip validation if not on GitHub Pages
+  if (!isGitHubPages()) {
+    return { valid: true };
+  }
+
+  const apiKey = req.headers['x-api-key'];
+  
+  if (!apiKey) {
+    return {
+      valid: false,
+      error: {
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32001,
+          message: 'Missing API key. Please include X-API-Key header.'
+        }
+      }
+    };
+  }
+  
+  if (!VALID_API_KEYS.includes(apiKey)) {
+    return {
+      valid: false,
+      error: {
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32002,
+          message: 'Invalid API key. Access denied.'
+        }
+      }
+    };
+  }
+  
+  return { valid: true };
+}
+
 // Load quotes data
 let quotesData;
 try {
@@ -41,7 +103,16 @@ function createMcpServer() {
 
 // Create Express app
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow API key header
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key', 'mcp-session-id'],
+  exposedHeaders: ['mcp-session-id']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Map to store transports by session ID
@@ -56,6 +127,12 @@ app.use((req, res, next) => {
 // Handle POST requests for client-to-server communication
 app.post('/mcp', async (req, res) => {
   try {
+    // Validate API key if running on GitHub Pages
+    const apiValidation = validateApiKey(req);
+    if (!apiValidation.valid) {
+      return res.status(401).json(apiValidation.error);
+    }
+
     // Check for existing session ID
     const sessionId = req.headers['mcp-session-id'];
     let transport;
@@ -120,6 +197,12 @@ app.post('/mcp', async (req, res) => {
 // Handle GET requests for server-to-client notifications via SSE
 app.get('/mcp', async (req, res) => {
   try {
+    // Validate API key if running on GitHub Pages
+    const apiValidation = validateApiKey(req);
+    if (!apiValidation.valid) {
+      return res.status(401).json(apiValidation.error);
+    }
+
     const sessionId = req.headers['mcp-session-id'];
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
@@ -138,6 +221,12 @@ app.get('/mcp', async (req, res) => {
 // Handle DELETE requests for session termination
 app.delete('/mcp', async (req, res) => {
   try {
+    // Validate API key if running on GitHub Pages
+    const apiValidation = validateApiKey(req);
+    if (!apiValidation.valid) {
+      return res.status(401).json(apiValidation.error);
+    }
+
     const sessionId = req.headers['mcp-session-id'];
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
@@ -163,20 +252,35 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     quotesLoaded: quotesData.length,
     activeSessions: Object.keys(transports).length,
-    transport: 'mcp-http'
+    transport: 'mcp-http',
+    apiKeyRequired: isGitHubPages(),
+    environment: isGitHubPages() ? 'GitHub Pages' : 'Local Development'
   });
 });
 
 // Root endpoint - API info using shared metadata
 app.get('/', (req, res) => {
+  const additionalInfo = {
+    description: 'MCP server providing Star Trek quotes via Streamable HTTP transport',
+    activeSessions: Object.keys(transports).length,
+    apiKeyRequired: isGitHubPages(),
+    environment: isGitHubPages() ? 'GitHub Pages' : 'Local Development'
+  };
+
+  // Add API key info if on GitHub Pages
+  if (isGitHubPages()) {
+    additionalInfo.authentication = {
+      required: true,
+      method: 'X-API-Key header',
+      description: 'API key authentication is required for GitHub Pages deployment'
+    };
+  }
+
   const apiInfo = getMcpServerMetadata(
     'Star Trek Quotes MCP Server',
     'mcp-streamable-http',
     quotesData,
-    { 
-      description: 'MCP server providing Star Trek quotes via Streamable HTTP transport',
-      activeSessions: Object.keys(transports).length
-    }
+    additionalInfo
   );
   
   res.json(apiInfo);
@@ -202,6 +306,7 @@ app.listen(port, '127.0.0.1', () => {
   console.log('🚀 Star Trek Quotes MCP Server (Streamable HTTP)');
   console.log(`🌐 Server running at: http://127.0.0.1:${port}`);
   console.log(`📊 Loaded ${quotesData.length} quotes`);
+  console.log(`🔒 API Key Required: ${isGitHubPages() ? 'YES (GitHub Pages)' : 'NO (Local Dev)'}`);
   console.log('🖖 Live long and prosper!');
   console.log('\n📝 MCP Endpoints:');
   console.log('  POST /mcp                 - MCP client requests');
