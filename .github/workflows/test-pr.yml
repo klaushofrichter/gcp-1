@@ -1,0 +1,49 @@
+name: Test Pull Request
+
+on:
+  pull_request:
+    branches: [ "production", "develop" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run core tests
+        run: npm run test:core
+        env:
+          QUOTES_MCP_API_KEY: ${{ secrets.QUOTES_MCP_API_KEY }}
+          REMOTE_MCP_URL: ${{ secrets.REMOTE_MCP_URL }}
+      
+      - name: Test GitHub Pages functionality
+        run: npm run test:github-pages
+      
+      - name: Run Cloudflare integration tests
+        run: npm run test:cloudflare
+        env:
+          QUOTES_MCP_API_KEY: ${{ secrets.QUOTES_MCP_API_KEY }}
+          REMOTE_MCP_URL: ${{ secrets.REMOTE_MCP_URL }}
+        continue-on-error: true  # Don't fail PR if Cloudflare tests fail (API key might not be available)
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            *.log
+          retention-days: 7 

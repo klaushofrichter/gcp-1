@@ -5,16 +5,17 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
-describe('MCP Proxy Server', () => {
+// Log proxy test status
+if (!process.env.QUOTES_MCP_API_KEY) {
+  console.log('⚠️  QUOTES_MCP_API_KEY not available - skipping proxy tests');
+}
+
+(process.env.QUOTES_MCP_API_KEY ? describe : describe.skip)('MCP Proxy Server', () => {
   let app;
   let server;
   let serverPort;
 
   beforeAll(async () => {
-    // Check if API key is available
-    if (!process.env.QUOTES_MCP_API_KEY) {
-      throw new Error('QUOTES_MCP_API_KEY environment variable is required for proxy tests');
-    }
 
     // Find an available port
     serverPort = 3001;

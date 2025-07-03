@@ -1,0 +1,45 @@
+# .gemini/config.yaml
+
+# General configuration for Gemini Code Assist
+enabled_features:
+  auto_review: true        # Enable automatic reviews for all pull requests
+  post_review_summary: true # Post a summary of the review at the end
+  inline_suggestions: true # Provide code suggestions directly in comments
+  have_fun: false          # Set to true for more playful summaries (optional)
+
+# Code review specific settings
+code_review:
+  # Minimum severity level for comments to be posted.
+  # Options: CRITICAL, HIGH, MEDIUM, LOW.
+  # Setting to MEDIUM means it will post CRITICAL, HIGH, and MEDIUM issues.
+  comment_severity_threshold: MEDIUM
+
+  # Maximum number of review comments to post. Helps keep reviews concise.
+  max_review_comments: 15
+
+  # Whether to suggest code changes that can be committed directly via GitHub's UI.
+  suggest_code_changes: true
+
+  # Paths to ignore during code reviews. Useful for generated files, vendor code, etc.
+  # Uses glob patterns.
+  ignore_patterns:
+    - "node_modules/**"
+    - "dist/**"
+    - "build/**"
+    - "coverage/**"
+    - "public/**" # Frontend build output
+    - "*.min.js"
+    - "*.bundle.js"
+    - ".*" # Ignore dotfiles like .env, .git, etc.
+    - "**/test/**" # Ignore test files and folders for general code review (tests should be reviewed separately)
+    - "**/*.d.ts" # Ignore TypeScript declaration files
+
+# Reference to your custom style guide.
+# Gemini will use this to inform its review comments.
+style_guide_path: ".gemini/styleguide.md"
+
+# You can add custom prompts or instructions here if needed,
+# though the style_guide_path often covers most needs.
+# custom_instructions: |
+#   Focus specifically on performance optimizations for large data sets
+#   in Vue components and efficient database queries in Node.js.
