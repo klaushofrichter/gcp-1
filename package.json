@@ -8,7 +8,6 @@
     "start": "node server.js",
     "start:http": "node http-server.js",
     "start:mcp-http": "node mcp-server-http.js",
-
     "start:proxy": "node proxy-server.js",
     "test": "npm run test:core && npm run test:cloudflare",
     "test:core": "jest --testPathPattern=\"(server|http-server|mcp-server-http|proxy-server)\\.test\\.js$\"",

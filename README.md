@@ -213,7 +213,8 @@ npm start
 
 **🎯 Perfect for connecting Cursor to the remote Cloudflare deployment!**
 
-**Why use the proxy?** Cursor (and most MCP clients) don't know about API keys, but the remote Cloudflare server requires authentication. The proxy solves this by automatically adding the API key to all requests.
+**Why use the proxy?** Cursor (and most MCP clients) don't know about API keys that are 
+needed for this implementation, but the remote Cloudflare server requires API key authentication. The proxy solves this by automatically adding the API key to all requests. 
 
 1. **Set up environment** (one-time setup):
    ```bash
@@ -221,6 +222,7 @@ npm start
    cp .env.example .env
    # Edit .env and add your API key:
    # QUOTES_MCP_API_KEY=your_actual_api_key
+   # REMOTE_MCP_URL=YOUR_MCP_SERVER_URL
    ```
 
 2. **Start the proxy server** (keep running):
@@ -272,6 +274,14 @@ npm start
     ```
 
   **Important**: Update the `args` path to match your actual installation directory.
+
+  You can also configure claude on the coomandline, e.g. like this to make a remote 
+  MCP server available that uses the MCP proxy. Both proxy and remote MCP server must
+  run.
+
+  ```
+  claude mcp add quotes --transport http http://localhost:3001
+  ```
 
 3. **Run Claude**
    - Launch claude code with the command line `claude`. You can check the MCP server
