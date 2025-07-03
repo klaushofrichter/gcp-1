@@ -14,7 +14,7 @@ import { registerMcpResources, registerMcpTools, getMcpServerMetadata } from './
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// API Keys for GitHub Pages deployment (same as Cloudflare for consistency)
+// API Keys for production deployment (same as Cloudflare for consistency)
 const VALID_API_KEYS = [
   'quotes-key-2024-live-long-prosper',
   'quotes-key-2024-make-it-so', 
@@ -22,24 +22,16 @@ const VALID_API_KEYS = [
   'quotes-key-2024-beam-me-up'
 ];
 
-// Check if running from GitHub Pages
-function isGitHubPages() {
-  // Only enable API key validation for actual GitHub Pages deployments
-  // Not for CI/testing environments
-  return !!(
-    process.env.GITHUB_PAGES ||
-    (process.env.NODE_ENV === 'production' && 
-     process.env.GITHUB_ACTIONS && 
-     (process.env.HOST?.includes('github.io') || 
-      process.env.HOSTNAME?.includes('github.io') ||
-      process.env.URL?.includes('github.io')))
-  );
+// Check if running in production mode with API key requirement
+function requiresApiKey() {
+  // Only enable API key validation when explicitly configured
+  return !!(process.env.REQUIRE_API_KEY || process.env.PRODUCTION_API_KEY);
 }
 
-// Validate API Key (only enforced on GitHub Pages)
+// Validate API Key (only enforced in production)
 function validateApiKey(req) {
-  // Skip validation if not on GitHub Pages
-  if (!isGitHubPages()) {
+  // Skip validation if not in production mode
+  if (!requiresApiKey()) {
     return { valid: true };
   }
 
@@ -127,7 +119,7 @@ app.use((req, res, next) => {
 // Handle POST requests for client-to-server communication
 app.post('/mcp', async (req, res) => {
   try {
-    // Validate API key if running on GitHub Pages
+    // Validate API key if running in production mode
     const apiValidation = validateApiKey(req);
     if (!apiValidation.valid) {
       return res.status(401).json(apiValidation.error);
@@ -197,7 +189,7 @@ app.post('/mcp', async (req, res) => {
 // Handle GET requests for server-to-client notifications via SSE
 app.get('/mcp', async (req, res) => {
   try {
-    // Validate API key if running on GitHub Pages
+    // Validate API key if running in production mode
     const apiValidation = validateApiKey(req);
     if (!apiValidation.valid) {
       return res.status(401).json(apiValidation.error);
@@ -221,7 +213,7 @@ app.get('/mcp', async (req, res) => {
 // Handle DELETE requests for session termination
 app.delete('/mcp', async (req, res) => {
   try {
-    // Validate API key if running on GitHub Pages
+    // Validate API key if running in production mode
     const apiValidation = validateApiKey(req);
     if (!apiValidation.valid) {
       return res.status(401).json(apiValidation.error);
@@ -253,8 +245,8 @@ app.get('/health', (req, res) => {
     quotesLoaded: quotesData.length,
     activeSessions: Object.keys(transports).length,
     transport: 'mcp-http',
-    apiKeyRequired: isGitHubPages(),
-    environment: isGitHubPages() ? 'GitHub Pages' : 'Local Development'
+    apiKeyRequired: requiresApiKey(),
+    environment: requiresApiKey() ? 'Production' : 'Local Development'
   });
 });
 
@@ -263,16 +255,16 @@ app.get('/', (req, res) => {
   const additionalInfo = {
     description: 'MCP server providing Star Trek quotes via Streamable HTTP transport',
     activeSessions: Object.keys(transports).length,
-    apiKeyRequired: isGitHubPages(),
-    environment: isGitHubPages() ? 'GitHub Pages' : 'Local Development'
+    apiKeyRequired: requiresApiKey(),
+    environment: requiresApiKey() ? 'Production' : 'Local Development'
   };
 
-  // Add API key info if on GitHub Pages
-  if (isGitHubPages()) {
+  // Add API key info if in production mode
+  if (requiresApiKey()) {
     additionalInfo.authentication = {
       required: true,
       method: 'X-API-Key header',
-      description: 'API key authentication is required for GitHub Pages deployment'
+      description: 'API key authentication is required for production deployment'
     };
   }
 
