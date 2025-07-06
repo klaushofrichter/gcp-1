@@ -298,7 +298,7 @@ app.listen(port, '127.0.0.1', () => {
   console.log('🚀 Star Trek Quotes MCP Server (Streamable HTTP)');
   console.log(`🌐 Server running at: http://127.0.0.1:${port}`);
   console.log(`📊 Loaded ${quotesData.length} quotes`);
-  console.log(`🔒 API Key Required: ${isGitHubPages() ? 'YES (GitHub Pages)' : 'NO (Local Dev)'}`);
+  console.log(`🔒 API Key Required: ${requiresApiKey() ? 'YES (Production)' : 'NO (Local Dev)'}`);
   console.log('🖖 Live long and prosper!');
   console.log('\n📝 MCP Endpoints:');
   console.log('  POST /mcp                 - MCP client requests');
