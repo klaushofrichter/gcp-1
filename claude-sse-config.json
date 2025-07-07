@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "quotes-server-sse": {
-      "type": "http",
-      "url": "http://localhost:3000",
-      "description": "MCP server with Server-Sent Events transport for Star Trek quotes"
-    }
-  }
-} 

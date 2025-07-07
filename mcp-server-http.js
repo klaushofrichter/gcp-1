@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 // API Keys for production deployment (same as Cloudflare for consistency)
 const VALID_API_KEYS = [
   'quotes-key-2024-live-long-prosper',
-  'quotes-key-2024-make-it-so', 
+  'quotes-key-2024-make-it-so',
   'quotes-key-2024-resistance-futile',
   'quotes-key-2024-beam-me-up'
 ];
@@ -36,7 +36,7 @@ function validateApiKey(req) {
   }
 
   const apiKey = req.headers['x-api-key'];
-  
+
   if (!apiKey) {
     return {
       valid: false,
@@ -50,7 +50,7 @@ function validateApiKey(req) {
       }
     };
   }
-  
+
   if (!VALID_API_KEYS.includes(apiKey)) {
     return {
       valid: false,
@@ -64,7 +64,7 @@ function validateApiKey(req) {
       }
     };
   }
-  
+
   return { valid: true };
 }
 
@@ -142,9 +142,8 @@ app.post('/mcp', async (req, res) => {
           console.log(`MCP session initialized: ${sessionId}`);
         },
         // DNS rebinding protection
-        enableDnsRebindingProtection: true,
+        enableDnsRebindingProtection: false,
         allowedHosts: ['127.0.0.1', 'localhost'],
-        allowedOrigins: ['*'],
       });
 
       // Clean up transport when closed
@@ -200,7 +199,7 @@ app.get('/mcp', async (req, res) => {
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
     }
-    
+
     const transport = transports[sessionId];
     await transport.handleRequest(req, res);
   } catch (error) {
@@ -224,10 +223,10 @@ app.delete('/mcp', async (req, res) => {
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
     }
-    
+
     const transport = transports[sessionId];
     await transport.handleRequest(req, res);
-    
+
     // Clean up the session
     delete transports[sessionId];
   } catch (error) {
@@ -275,8 +274,32 @@ app.get('/', (req, res) => {
     quotesData,
     additionalInfo
   );
-  
+
   res.json(apiInfo);
+});
+
+// Proxy POST / to /mcp for compatibility with clients that POST to root
+app.post('/', (req, res, next) => {
+  // Forward the request to the /mcp handler
+  req.url = '/mcp';
+  app._router.handle(req, res, next);
+});
+
+// Register endpoint
+app.post('/register', (req, res) => {
+  res.json({
+    name: 'Star Trek Quotes MCP Server',
+    version: '1.0.0',
+    description: 'MCP server providing Star Trek quotes via Streamable HTTP transport',
+    transport: 'mcp-streamable-http',
+    endpoints: {
+      'POST /mcp': 'MCP client requests and initialization',
+      'GET /mcp': 'MCP server-to-client notifications (SSE)',
+      'DELETE /mcp': 'MCP session termination',
+      'GET /health': 'Health check',
+      'GET /': 'API information',
+    }
+  });
 });
 
 // 404 handler
@@ -285,7 +308,7 @@ app.use('*', (req, res) => {
     error: 'Endpoint not found',
     availableEndpoints: [
       'POST /mcp',
-      'GET /mcp', 
+      'GET /mcp',
       'DELETE /mcp',
       'GET /health',
       'GET /'
@@ -339,4 +362,4 @@ process.on('SIGINT', () => {
     }
   });
   process.exit(0);
-}); 
+});

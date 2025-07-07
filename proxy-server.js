@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PROXY_PORT || 3001;
+const PORT = process.env.PROXY_PORT || 3003;
 const REMOTE_MCP_URL = process.env.REMOTE_MCP_URL || 'https://quotes-mcp-server.klaushofrichter.workers.dev';
 const API_KEY = process.env.QUOTES_MCP_API_KEY;
 

@@ -81,8 +81,43 @@ async function validateApiKey(request, env) {
 // HTTP handler for Cloudflare Workers
 export default {
   async fetch(request, env, ctx) {
-    if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+    const url = new URL(request.url);
+
+    // Handle OPTIONS requests for CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, X-API-Key'
+        }
+      });
+    }
+
+    // Handle /register endpoint for client discovery
+    if (url.pathname === '/register' && request.method === 'POST') {
+      const registerResponse = {
+        name: 'quotes-server-cloudflare',
+        version: '1.0.0',
+        description: 'MCP server running on Cloudflare Workers',
+        transport: 'mcp-http',
+        endpoints: {
+          'POST /': 'MCP requests'
+        }
+      };
+      
+      return new Response(JSON.stringify(registerResponse), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // For MCP, only allow POST requests to the root path
+    if (url.pathname !== '/' || request.method !== 'POST') {
+      return new Response('Not found', { status: 404 });
     }
 
     // Validate API Key first
