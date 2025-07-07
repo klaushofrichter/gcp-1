@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 // API Keys for production deployment (same as other servers for consistency)
 const VALID_API_KEYS = [
   'quotes-key-2024-live-long-prosper',
-  'quotes-key-2024-make-it-so', 
+  'quotes-key-2024-make-it-so',
   'quotes-key-2024-resistance-futile',
   'quotes-key-2024-beam-me-up'
 ];
@@ -37,7 +37,7 @@ function validateApiKey(req) {
   }
 
   const apiKey = req.headers['x-api-key'];
-  
+
   if (!apiKey) {
     return {
       valid: false,
@@ -51,7 +51,7 @@ function validateApiKey(req) {
       }
     };
   }
-  
+
   if (!VALID_API_KEYS.includes(apiKey)) {
     return {
       valid: false,
@@ -65,7 +65,7 @@ function validateApiKey(req) {
       }
     };
   }
-  
+
   return { valid: true };
 }
 
@@ -139,7 +139,7 @@ app.post('/mcp', async (req, res) => {
           transports[sessionId] = transport;
           console.log(`MCP SSE session initialized: ${sessionId}`);
         },
-        enableDnsRebindingProtection: true,
+        enableDnsRebindingProtection: false,
         allowedHosts: ['127.0.0.1', 'localhost'],
         allowedOrigins: ['*'],
       });
@@ -195,7 +195,7 @@ app.get('/mcp', async (req, res) => {
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
     }
-    
+
     const transport = transports[sessionId];
     await transport.handleRequest(req, res);
   } catch (error) {
@@ -219,10 +219,10 @@ app.delete('/mcp', async (req, res) => {
     if (!sessionId || !transports[sessionId]) {
       return res.status(400).send('Invalid or missing session ID');
     }
-    
+
     const transport = transports[sessionId];
     await transport.handleRequest(req, res);
-    
+
     // Clean up the session
     delete transports[sessionId];
   } catch (error) {
@@ -278,7 +278,7 @@ app.get('/', (req, res) => {
     quotesData,
     additionalInfo
   );
-  
+
   res.json(apiInfo);
 });
 
@@ -287,11 +287,11 @@ app.get('/pushRandomQuote', async (req, res) => {
   try {
     const randomQuote = getRandomQuote(quotesData);
     const formattedQuote = formatQuoteAsText(randomQuote);
-    
+
     console.log(`🎲 Pushing random quote to all connected MCP clients: ${formattedQuote}`);
-    
+
     const activeTransports = Object.values(transports);
-    
+
     if (activeTransports.length === 0) {
       return res.json({
         success: false,
@@ -300,7 +300,7 @@ app.get('/pushRandomQuote', async (req, res) => {
         activeSessions: 0
       });
     }
-    
+
     // Send notification to all connected clients using transport.sendNotification
     for (const transport of activeTransports) {
       if (typeof transport.sendNotification === 'function') {
@@ -316,7 +316,7 @@ app.get('/pushRandomQuote', async (req, res) => {
         }
       }
     }
-    
+
     res.json({
       success: true,
       message: `Random quote sent to ${activeTransports.length} active MCP session(s)`,
@@ -324,7 +324,7 @@ app.get('/pushRandomQuote', async (req, res) => {
       activeSessions: activeTransports.length,
       timestamp: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('Error pushing random quote:', error);
     res.status(500).json({
@@ -366,7 +366,7 @@ app.use('*', (req, res) => {
     error: 'Endpoint not found',
     availableEndpoints: [
       'POST /mcp',
-      'GET /mcp', 
+      'GET /mcp',
       'DELETE /mcp',
       'GET /health',
       'GET /',
@@ -424,4 +424,4 @@ process.on('SIGINT', () => {
     }
   });
   process.exit(0);
-}); 
+});
