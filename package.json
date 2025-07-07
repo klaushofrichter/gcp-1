@@ -28,7 +28,7 @@
     "worker:validate": "npm run test:worker && npm run worker:deploy && npm run test:integration"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.2",
+    "@modelcontextprotocol/sdk": "^1.15.0",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^4.18.2",

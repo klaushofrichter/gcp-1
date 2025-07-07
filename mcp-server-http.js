@@ -144,6 +144,7 @@ app.post('/mcp', async (req, res) => {
         // DNS rebinding protection
         enableDnsRebindingProtection: true,
         allowedHosts: ['127.0.0.1', 'localhost'],
+        allowedOrigins: ['*'],
       });
 
       // Clean up transport when closed

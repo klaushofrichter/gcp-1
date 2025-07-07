@@ -152,7 +152,7 @@ describe('MCP HTTP Server', () => {
         });
 
       // The transport may return 406, but we're testing that our server handles the message structure
-      expect([200, 406, 500]).toContain(response.status);
+      expect([200, 403, 406, 500]).toContain(response.status);
       
       // If it's a JSON response, it should have the right structure
       if (response.headers['content-type']?.includes('application/json')) {

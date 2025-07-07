@@ -141,6 +141,7 @@ app.post('/mcp', async (req, res) => {
         },
         enableDnsRebindingProtection: true,
         allowedHosts: ['127.0.0.1', 'localhost'],
+        allowedOrigins: ['*'],
       });
 
       transport.onclose = () => {
