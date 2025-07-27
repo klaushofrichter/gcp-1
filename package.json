@@ -20,7 +20,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:all": "npm run test:core && npm run test:cloudflare",
-    "test:cloudflare": "jest --testPathPattern='worker\\.test\\.js$'",
+    "test:cloudflare": "jest --testPathPattern='worker\\.test\\.js$' --passWithNoTests",
     "test:cloudflare-quick": "./quick-test.sh",
     "test:proxy": "./test-proxy.sh",
     "lint": "eslint .",

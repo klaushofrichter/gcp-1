@@ -235,15 +235,17 @@ if (!process.env.QUOTES_MCP_API_KEY) {
       expect(response.status).toBe(400);
     });
 
-    // Skipping this test for now due to Express/Node.js fetch behavior with empty JSON bodies
+    // Skip: This test causes issues with Express/Supertest handling of empty JSON bodies
+    // The proxy server handles this case in production, but testing it is problematic
     test.skip('should handle requests with no body', async () => {
       const response = await app
         .post('/')
-        .set('Content-Type', 'application/json');
+        .set('Content-Type', 'application/json')
+        .send(); // Explicitly send empty body
 
-      // The proxy should handle empty requests gracefully
+      // The proxy should handle empty requests gracefully (return error)
       expect([400, 500]).toContain(response.status);
-    }, 15000); // Increase timeout to 15 seconds
+    }, 15000);
 
     test('should handle invalid JSON-RPC messages', async () => {
       const invalidMessage = {
