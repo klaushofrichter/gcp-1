@@ -82,6 +82,9 @@ async function validateApiKey(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    
+    // Log all incoming requests for debugging
+    console.log(`${request.method} ${url.pathname} - User-Agent: ${request.headers.get('user-agent')}`);
 
     // Handle OPTIONS requests for CORS preflight
     if (request.method === 'OPTIONS') {
@@ -94,15 +97,16 @@ export default {
       });
     }
 
-    // Handle /register endpoint for client discovery
-    if (url.pathname === '/register' && request.method === 'POST') {
+    // Handle discovery endpoints (GET and POST to /register and /.well-known/mcp)
+    if ((url.pathname === '/register' || url.pathname === '/.well-known/mcp') && (request.method === 'POST' || request.method === 'GET')) {
       const registerResponse = {
         name: 'quotes-server-cloudflare',
         version: '1.0.0',
         description: 'MCP server running on Cloudflare Workers',
         transport: 'mcp-http',
         endpoints: {
-          'POST /': 'MCP requests'
+          'POST /': 'MCP protocol requests',
+          'POST /mcp': 'MCP protocol requests (alternative path)'
         }
       };
       
@@ -115,9 +119,24 @@ export default {
       });
     }
 
-    // For MCP, only allow POST requests to the root path
-    if (url.pathname !== '/' || request.method !== 'POST') {
-      return new Response('Not found', { status: 404 });
+    // For MCP protocol requests, allow POST to root or /mcp path  
+    if ((url.pathname !== '/' && url.pathname !== '/mcp') || request.method !== 'POST') {
+      console.log(`404 - Unsupported path or method: ${request.method} ${url.pathname}`);
+      return new Response(JSON.stringify({
+        error: 'Not found',
+        message: `Unsupported path or method: ${request.method} ${url.pathname}`,
+        supportedEndpoints: {
+          'POST /': 'MCP requests',
+          'POST /register': 'Client discovery',
+          'OPTIONS /*': 'CORS preflight'
+        }
+      }), { 
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
     }
 
     // Validate API Key first
@@ -309,7 +328,7 @@ export default {
               };
             } else {
               const quotesText = matchingQuotes
-                .map(quote => formatQuoteAsText(quote))
+                .map(quote => formatQuoteAsText(quote, '(served by cloudflare)'))
                 .join('\n\n');
               
               response = {
@@ -331,7 +350,7 @@ export default {
               result: {
                 content: [{
                   type: 'text',
-                  text: formatQuoteAsText(randomQuote)
+                  text: formatQuoteAsText(randomQuote, '(served by cloudflare)')
                 }]
               }
             };

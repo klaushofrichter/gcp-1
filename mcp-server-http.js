@@ -88,7 +88,7 @@ function createMcpServer() {
 
   // Register all MCP resources and tools using shared functions
   registerMcpResources(server, quotesData, 'HTTP');
-  registerMcpTools(server, quotesData, 'HTTP');
+  registerMcpTools(server, quotesData, 'HTTP', '(served by http)');
 
   return server;
 }

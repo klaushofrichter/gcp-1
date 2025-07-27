@@ -29,7 +29,7 @@ const server = new McpServer({
 
 // Register all MCP resources and tools using shared functions
 registerMcpResources(server, quotesData, 'Stdio');
-registerMcpTools(server, quotesData, 'Stdio');
+registerMcpTools(server, quotesData, 'Stdio', '(served by stdio)');
 
 // Start the server
 async function main() {

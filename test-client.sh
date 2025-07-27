@@ -11,12 +11,15 @@ echo "$0: To create that setting, run the claude commands interactively first".
 echo "$0: "
 
 # servers we use
-SERVERS="stdio http cloudflare"
+SERVERS="stdio http proxy"
 
 # full Claude cleanup
-for SERVER in ${SERVERS}; do
-  claude mcp remove quotes-${SERVER} > /dev/null 2>&1 || true
-done
+CURRENTSERVERS=$( claude mcp list | grep ":" | cut -d ':' -f 1 | xargs )
+if [ ! -z "${CURRENTSERVERS}" ]; then
+  for SERVER in ${CURRENTSERVERS}; do
+    claude mcp remove ${SERVER} > /dev/null 2>&1 || true
+  done
+fi
 
 # gemini settings backup
 [ ! -d .gemini ] && mkdir .gemini
@@ -44,7 +47,7 @@ for SERVER in ${SERVERS}; do
       GEMINIJSON='{"httpUrl":"http://localhost:3001/mcp"}'
     ;;
 
-    "cloudflare")
+    "proxy")
       PORT=3003
       NPMSTART="proxy"
       CLAUDEJSON='{"type":"http", "url": "http://localhost:3003","description":"Remote http MCP server for Star Trek Quotes via local proxy" }'
@@ -67,17 +70,19 @@ for SERVER in ${SERVERS}; do
   # set up claude
   #claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" > /dev/null 2>&1 &
   claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" 
-  claude mcp list
+  #echo "$0: Claude MCP List:"
+  #claude mcp list
 
   # set up gemini
+  echo "$0: Gemini MCP List:"
   echo -n '{"mcpServers":{"quotes-' > .gemini/settings.json
   echo -n "${SERVER}" >> .gemini/settings.json
   echo -n '": ' >> .gemini/settings.json
   echo "${GEMINIJSON}}}" >> .gemini/settings.json
-  cat .gemini/settings.json | jq
+  #cat .gemini/settings.json | jq -c
 
   # go through prompts
-  for PROMPT in "give me a random quote"; do
+  for PROMPT in "give me a random quote including information about the tool that provided it"; do
 
     # run claude with the prompt against the server
     echo "$0:"
@@ -101,9 +106,12 @@ for SERVER in ${SERVERS}; do
 done
 
 # full Claude cleanup
-for SERVER in ${SERVERS}; do
-  claude mcp remove quotes-${SERVER} > /dev/null 2>&1 || true
-done
+CURRENTSERVERS=$( claude mcp list | grep ":" | cut -d ':' -f 1 | xargs )
+if [ ! -z "${CURRENTSERVERS}" ]; then
+  for SERVER in ${CURRENTSERVERS}; do
+    claude mcp remove ${SERVER} > /dev/null 2>&1 || true
+  done
+fi
 
 # reset claude config
 ./claude-config.sh > /dev/null 2>&1

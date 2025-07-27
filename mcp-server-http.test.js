@@ -51,23 +51,27 @@ describe('MCP HTTP Server', () => {
       
       // Wait for the process to exit
       await new Promise((resolve) => {
-        server.on('exit', () => {
-          server = null;
-          resolve();
-        });
-        
         // Force kill after 3 seconds if it doesn't exit gracefully
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           if (server && !server.killed) {
             server.kill('SIGKILL');
             server = null;
           }
           resolve();
         }, 3000);
+        
+        server.on('exit', () => {
+          clearTimeout(timeout);
+          server = null;
+          resolve();
+        });
       });
       
       // Give a moment for any remaining cleanup
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => {
+        const cleanup = setTimeout(resolve, 100);
+        cleanup.unref();
+      });
     }
   });
 
