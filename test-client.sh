@@ -68,13 +68,13 @@ for SERVER in ${SERVERS}; do
   [ ! -z "${NPMSTART}" ] && npm run start:${NPMSTART} > /dev/null 2>&1 &
 
   # set up claude
-  #claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" > /dev/null 2>&1 &
-  claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" 
+  claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" > /dev/null 2>&1 &
+  #claude mcp add-json quotes-${SERVER} "${CLAUDEJSON}" 
   #echo "$0: Claude MCP List:"
   #claude mcp list
 
   # set up gemini
-  echo "$0: Gemini MCP List:"
+  #echo "$0: Gemini MCP List:"
   echo -n '{"mcpServers":{"quotes-' > .gemini/settings.json
   echo -n "${SERVER}" >> .gemini/settings.json
   echo -n '": ' >> .gemini/settings.json

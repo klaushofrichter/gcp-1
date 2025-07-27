@@ -1,1 +1,1 @@
-{"mcpServers":{"quotes-stdio": {"type":"stdio","command":"node","args":["/Volumes/WDBlack2T/Development/mcp-1/server.js"],"env":{}}}}
+{"mcpServers":{"quotes-proxy": {"httpUrl":"http://localhost:3003/mcp"}}}
